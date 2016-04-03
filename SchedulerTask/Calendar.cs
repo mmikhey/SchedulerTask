@@ -1,4 +1,9 @@
-﻿using System;
+﻿
+namespace SchedulerTask
+{
+
+using System;
+
 
 /// <summary>
 /// реализация календаря
@@ -19,17 +24,15 @@ public class Calendar
             if ((time1 >= calendar.starttime) & (calendar.endtime <= time2)&(calendar.occflag==true)) return true;
             else return false;
         }
-
-
-
-
-        // "установить" календарь : время начала выполнения, операция
-        public void SetCalendar(int time, Operation o)
+    
+    // "установить" календарь : время начала выполнения, операция
+        public void SetCalendar(int time, AOperation o)
         {
-            int endtime = time + o.GetLasting();
+            int endtime = time + o.GetDuration();
             if (EqIsFree(time, endtime))
             {
                 calendar.occflag = false;
             }
         }
+}
 }

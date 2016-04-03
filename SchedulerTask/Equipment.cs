@@ -1,11 +1,15 @@
-﻿using System;
+﻿
 
-/// <summary>
-/// оборудование
-/// </summary>
-public class Equipment
+namespace SchedulerTask
 {
-    Calendar ca;
+    using System;
+
+    /// <summary>
+    /// оборудование
+    /// </summary>
+    public class Equipment
+    {
+        Calendar ca;
 
         public Equipment(Calendar ca)
         {
@@ -17,7 +21,7 @@ public class Equipment
 
         public int StartTime
         {
-           // get { return starttime; }
+            // get { return starttime; }
             set { starttime = value; }
         }
 
@@ -28,15 +32,16 @@ public class Equipment
         }
 
         //назначить работу o с началом работы time 
-        public void SetWork(int time, Operation o)
+        public void SetWork(int time, AOperation o)
         {
-            int endtime = o.GetLasting() + time; //время окончания операции
+            int endtime = o.GetDuration() + time; //время окончания операции
             if (ca.EqIsFree(time, endtime))
             {
                 StartTime = time;
                 EndTime = endtime;
-                ca.SetCalendar(time,o);
+                ca.SetCalendar(time, o);
             }
-           
+
         }
+    }
 }
