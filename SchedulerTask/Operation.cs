@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SchedulerTask
 {
-    interface AOperation
+    public interface AOperation
     {
         int GetDuration();
         int GetTimeMin();
