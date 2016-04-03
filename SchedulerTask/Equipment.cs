@@ -43,5 +43,12 @@ namespace SchedulerTask
             }
 
         }
+
+        //проверить доступность оборудования в указанный промежуток времени; true - оборудование доступно; false - занято
+        public bool IsFree(int time, int endtime)
+        {
+            if (ca.EqIsFree(time, endtime)) return true;
+            else return false;
+        }
     }
 }
