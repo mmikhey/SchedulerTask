@@ -5,15 +5,39 @@ namespace SchedulerTask
     using System;
 
     /// <summary>
-    /// структура промежутков тактов (целые числа)
+    /// класс промежутков тактов (целые числа)
     /// </summary>
     /// 
 
 
-    public struct Interval
+    public class Interval
     {
-        public int starttime;
-        public bool occflag;//флаг занятости; true - оборудование свободно, false - занято
-        public int endtime;
+        DateTime starttime;
+        bool occflag;//флаг занятости; true - оборудование свободно, false - занято
+        DateTime endtime;
+
+        public DateTime GetStartTime()
+        { return starttime; }
+
+        public DateTime GetEndTime()
+        { return endtime; }
+
+        public bool GetOccupiedFlag()
+        { return occflag; }
+
+        public void SetStartTime(DateTime val)
+        {
+            starttime = val;
+        }
+
+        public void SetEndTime(DateTime val)
+        {
+            endtime = val;
+        }
+
+        public void SetFlag(bool val)
+        {
+            occflag = val;
+        }
     }
 }

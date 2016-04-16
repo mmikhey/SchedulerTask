@@ -8,7 +8,7 @@ namespace SchedulerTask
 {
     public interface AOperation
     {
-        int GetDuration();
+        TimeSpan GetDuration();
         int GetTimeMin();
         int GetTimeMax();
         bool IsInterrupted();
@@ -21,7 +21,7 @@ namespace SchedulerTask
 
     class Operation : AOperation//add equipment????????
     {
-        private int duration;
+        private TimeSpan duration;
         private int time_min;
         private int time_max;
         private bool interrupted;
@@ -29,7 +29,7 @@ namespace SchedulerTask
         private List<AOperation> PreviousOperations;
         private bool end;//operation is over
 
-        public Operation(int duration_, int time_min_, int time_max_, bool interrupted_, List<AOperation> Prev)
+        public Operation(TimeSpan duration_, int time_min_, int time_max_, bool interrupted_, List<AOperation> Prev)
         {
             duration = duration_;
             time_min = time_min_;
@@ -45,7 +45,7 @@ namespace SchedulerTask
 
         }
 
-        public int GetDuration()
+        public TimeSpan GetDuration()
         {
             return duration;
         }
