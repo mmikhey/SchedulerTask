@@ -1,24 +1,22 @@
-﻿
-namespace SchedulerTask
-{
-
-    using System;
+﻿    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
 
+namespace SchedulerTask
+{
 
-    /// <summary>
-    /// реализация календаря
-    /// </summary>
-    public class Calendar
-    {
-        List<Interval> calendar;
-        Equipment eq;
-
-        public Calendar(List<Interval> calendar, Equipment eq)
+/// <summary>
+/// реализация календаря
+/// </summary>
+public class Calendar
+{
+    Interval calendar;
+    
+    public Calendar(List<Interval> calendar, Equipment eq)
         {
+            
             this.calendar = calendar;
             this.eq = eq;
 
@@ -29,6 +27,7 @@ namespace SchedulerTask
 
         //узнать, свободно ли оборудование в промежуток времени
         //?? дополнительно на вход оборудование ??
+
         public bool EqIsFree(DateTime time1, DateTime time2)
         {
             int index = FindInterval(time1);
@@ -109,4 +108,21 @@ namespace SchedulerTask
             return index;
         }
     }
+
+        public bool EqIsFree(int time1, int time2)
+        {
+            if ((time1 >= calendar.starttime) & (calendar.endtime <= time2)&(calendar.occflag==true)) return true;
+            else return false;
+        }
+    
+    // "установить" календарь : время начала выполнения, операция
+        public void SetCalendar(int time, AOperation o)
+        {
+            int endtime = time + o.GetDuration();
+            if (EqIsFree(time, endtime))
+            {
+                calendar.occflag = false;
+            }
+        }
+}
 }

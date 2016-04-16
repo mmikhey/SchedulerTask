@@ -1,13 +1,17 @@
-﻿
+﻿using System;
+
 namespace SchedulerTask
 {
 
-    using System;
+
 
     /// <summary>
+    /// 
     /// класс промежутков тактов (целые числа)
+    /// структура промежутков тактов (целые числа)
     /// </summary>
     /// 
+
 
 
     public class Interval
@@ -39,5 +43,11 @@ namespace SchedulerTask
         {
             occflag = val;
         }
+
+    public struct Interval
+    {
+        public int starttime;
+        public bool occflag;//флаг занятости; true - оборудование свободно, false - занято
+        public int endtime;
     }
 }

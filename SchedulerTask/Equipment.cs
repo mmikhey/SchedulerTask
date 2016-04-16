@@ -1,12 +1,12 @@
-﻿
-
-namespace SchedulerTask
-{
-    using System;
+﻿    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+
+namespace SchedulerTask
+{
+
 
     /// <summary>
     /// оборудование
@@ -28,13 +28,21 @@ namespace SchedulerTask
             individflag = flag;
         }
 
-        public DateTime StartTime
+        public Equipment(Calendar ca)
+        {
+            this.ca = ca;
+        }
+
+        public bool freeflag = true;
+        int starttime, endtime; //начало и конец выполнения 
+
+        public int StartTime
         {
             // get { return starttime; }
             set { starttime = value; }
         }
 
-        public DateTime EndTime
+        public int EndTime
         {
             // get { return starttime; }
             set { endtime = value; }
@@ -65,6 +73,12 @@ namespace SchedulerTask
             bool flag;
 
             DateTime endtime = time.Add(o.GetDuration()); //время окончания операции
+
+        //назначить работу o с началом работы time 
+        public void SetWork(int time, AOperation o)
+        {
+            int endtime = o.GetDuration() + time; //время окончания операции
+
             if (ca.EqIsFree(time, endtime))
             {
                 StartTime = time;
@@ -90,6 +104,8 @@ namespace SchedulerTask
             if (individflag == true) eqlist.Add(this);
             //else eqlist.Add
             return eqlist;
+            }
+
         }
     }
 }

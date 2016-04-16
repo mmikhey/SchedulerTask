@@ -17,9 +17,11 @@ namespace SchedulerTask
         bool IsEnd();
         void SetEnd(bool end_);
         bool PreviousOperationIsEnd();
+        Equipment GetEquipment();
+        //bool MayOperationPerfomed();
     }
 
-    class Operation : AOperation//add equipment????????
+    class Operation : AOperation//add equipment???????? and MayOperationPerformed
     {
         private TimeSpan duration;
         private int time_min;
@@ -28,8 +30,13 @@ namespace SchedulerTask
         private int time_execution;//execution time
         private List<AOperation> PreviousOperations;
         private bool end;//operation is over
+<<<<<<< HEAD
 
         public Operation(TimeSpan duration_, int time_min_, int time_max_, bool interrupted_, List<AOperation> Prev)
+=======
+        private Equipment equipment;
+        public Operation(int duration_, int time_min_, int time_max_, bool interrupted_, List<AOperation> Prev,Equipment equipment_)
+>>>>>>> origin/master
         {
             duration = duration_;
             time_min = time_min_;
@@ -42,6 +49,7 @@ namespace SchedulerTask
                 PreviousOperations.Add(prev);
             }
             end = false;
+            equipment = equipment_;
 
         }
 
@@ -98,6 +106,21 @@ namespace SchedulerTask
             }
             return flag;
         }
+
+        public Equipment GetEquipment()
+        {
+            return equipment;
+        }
+
+        //public bool MayOperationPerfomed()
+        //{
+        //    bool flag = false;
+        //    if ((this.PreviousOperationIsEnd())&&(equipment.EqIsFree()))
+        //    {
+        //        flag = true;
+        //    }
+        //    return flag;
+        //}
     }
     
 }
