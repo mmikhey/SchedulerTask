@@ -43,7 +43,12 @@
   <ItemGroup>
     <Compile Include="Calendar.cs" />
     <Compile Include="Equipment.cs" />
+<<<<<<< HEAD
+    <Compile Include="EquipmentManager.cs" />
+    <Compile Include="ICalendar.cs" />
+=======
     <Compile Include="FrontBuilding.cs" />
+>>>>>>> origin/master
     <Compile Include="Interval.cs" />
     <Compile Include="Operation.cs" />
     <Compile Include="Program.cs" />
