@@ -1,14 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerTask", "SchedulerTask\SchedulerTask.csproj", "{FDB7C3DE-E4E7-4488-9D06-300569390236}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7283FEC6-A117-4634-9056-66E42FD4FFA9}"
-	ProjectSection(SolutionItems) = preProject
-		SchedulerTask\Calendar.cs = SchedulerTask\Calendar.cs
-		SchedulerTask\Equipment.cs = SchedulerTask\Equipment.cs
-		SchedulerTask\Interval.cs = SchedulerTask\Interval.cs
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
