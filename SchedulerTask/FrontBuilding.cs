@@ -44,14 +44,18 @@ namespace SchedulerTask
             // Назначение операций
             foreach (Operation operation in front)
             {
-                if (operation.GetEquipment().SetWork(currenTime, operation))
+                bool occflag;
+                DateTime operationtime;
+                calendar.GetTimeofRelease(currenTime, operation, out occflag, out operationtime);
+                if (!occflag)
                 {
                     // Событие на момент завершения выполнения операции
-                    events.Add(new Event(operation, currenTime.Add(operation.GetDuration())));
+                    events.Add(new Event(operationtime.Add(operation.GetDuration())));
                 }
                 else
                 {
                     // Событие на момент появления возможности выполнения операции
+                    events.Add(new Event(operationtime));
                 }
             }
         }
