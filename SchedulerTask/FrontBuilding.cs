@@ -1,33 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchedulerTask
 {
     /// <summary>
-    /// Класс формирования фронта
+    /// Формирование фронта
     /// </summary>
     class FrontBuilding
     {
-        private List<AOperation> ops;
+        private Calendar calendar;
 
-        public FrontBuilding(List<AOperation> operations)
+        public FrontBuilding(Calendar calendar)
         {
-            this.ops = operations;
+            this.calendar = calendar;
         }
 
-        public List<AOperation> BuildFront()
+        /// <summary>
+        /// Построить фронт
+        /// </summary>
+        /// <param name="operations">Невыполненные операции</param>
+        /// <param name="currenTime">Текущее время</param>
+        /// <param name="events">Список событий (будут добавлены новые события)</param>
+        public void BuildFront(List<Operation> operations, DateTime currenTime, List<Event> events)
         {
-            List<AOperation> r = new List<AOperation>();
+            List<Operation> front = new List<Operation>();
 
-            foreach(AOperation o in ops)
+            // Формирование фронта
+            foreach (Operation operation in operations)
             {
-                if (o.PreviousOperationIsEnd() && o.GetEquipment().freeflag) r.Add(o);
+                DateTime startTime = currenTime;
+                DateTime endTime = currenTime.Add(operation.GetDuration());
+
+                if (operation.PreviousOperationIsEnd() && operation.GetEquipment().freeflag &&
+                    calendar.EqIsFree(startTime, endTime))
+                {
+                    front.Add(operation);
+                }
             }
 
-            return r;
+            // Упорядочение фронта
+            //SortFront.Sort(front);
+
+            // Назначение операций
+            foreach (Operation operation in front)
+            {
+                bool occflag;
+                DateTime operationtime;
+                calendar.GetTimeofRelease(currenTime, operation, out occflag, out operationtime);
+                if (!occflag)
+                {
+                    // Событие на момент завершения выполнения операции
+                    events.Add(new Event(operationtime.Add(operation.GetDuration())));
+                }
+                else
+                {
+                    // Событие на момент появления возможности выполнения операции
+                    events.Add(new Event(operationtime));
+                }
+            }
         }
     }
 }
