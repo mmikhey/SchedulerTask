@@ -8,57 +8,60 @@ namespace SchedulerTask
 {
     public interface AOperation
     {
-        int GetDuration();
-        int GetTimeMin();
-        int GetTimeMax();
+        TimeSpan GetDuration();
+        DateTime GetTimeMin();
+        DateTime GetTimeMax();
         bool IsInterrupted();
-        int GetTimeExecution();
-        void SetTimeExecution(int time_);
-        bool IsEnd();
-        void SetEnd(bool end_);
-        bool PreviousOperationIsEnd();
+        DateTime GetTimeExecution();
+        void SetTimeExecution(TimeSpan time_);
+        bool IsEnd(DateTime time_);
+        bool IsEnabled();
+        //void SetEnd(bool end_);
+        bool PreviousOperationIsEnd(DateTime time_);
         Equipment GetEquipment();
-        //bool MayOperationPerfomed();
+        bool MayOperationPerformed(DateTime time_);
     }
 
     class Operation : AOperation//add equipment???????? and MayOperationPerformed
     {
-        private int duration;
-        private int time_min;
-        private int time_max;
+        private TimeSpan duration;
+        private DateTime time_min;
+        private DateTime time_max;
         private bool interrupted;
-        private int time_execution;//execution time
+        private DateTime time_execution;//execution time
         private List<AOperation> PreviousOperations;
-        private bool end;//operation is over
+        //private bool end;//operation is over
         private Equipment equipment;
+        private EquipmentManager manager;
+
         public Operation(int duration_, int time_min_, int time_max_, bool interrupted_, List<AOperation> Prev,Equipment equipment_)
         {
-            duration = duration_;
-            time_min = time_min_;
-            time_max = time_max_;
+            duration = new  TimeSpan(duration_);
+            time_min = new DateTime(time_min_);
+            time_max = new DateTime(time_max_);
             interrupted = interrupted_;
             PreviousOperations = new List<AOperation>();
-            time_execution = 0;
+            time_execution = new DateTime(0);
             foreach (Operation prev in Prev)
             {
                 PreviousOperations.Add(prev);
             }
-            end = false;
+            //end = false;
             equipment = equipment_;
 
         }
 
-        public int GetDuration()
+        public TimeSpan GetDuration()
         {
             return duration;
         }
 
-        public int GetTimeMin()
+        public DateTime GetTimeMin()
         {
             return time_min;
         }
 
-        public int GetTimeMax()
+        public DateTime GetTimeMax()
         {
             return time_max;
         }
@@ -68,32 +71,49 @@ namespace SchedulerTask
             return interrupted;
         }
 
-        public int GetTimeExecution()
+        public DateTime GetTimeExecution()
         {
             return time_execution;
         }
 
-        public void SetTimeExecution(int time_)
+        public void SetTimeExecution(TimeSpan time_)
         {
-            time_execution = time_;
+            time_execution.Add(time_);
         }
 
-        public bool IsEnd()
+        //если поставлена,может быть запоминать интервал? и атомарное оборудование
+        //или просто id интервала,а там хранить операцию и оборудование?
+        public bool IsEnabled()
         {
+            bool flag = false;
+            return flag;
+        }
+
+        //если операция поставлена в расписание и момент времени запроса
+        //больше или равен моменту окончания операции(время начала + время длительности
+
+        public bool IsEnd(DateTime time_)
+        {
+            //return end;
+            bool end=false;
+            if (this.IsEnabled())
+            {
+            }
             return end;
-        }
 
-        public void SetEnd(bool end_)
-        {
-            end = end_;
         }
+          
+        //public void SetEnd(bool end_)
+        //{
+        //    end = end_;
+        //}
 
-        public bool PreviousOperationIsEnd()
+        public bool PreviousOperationIsEnd(DateTime time_)
         {
             bool flag = true;
             foreach (AOperation prev in PreviousOperations)
             {
-                if (prev.IsEnd() == false)
+                if (prev.IsEnd(time_) == false)
                 {
                     flag = false;
                     break;
@@ -107,15 +127,15 @@ namespace SchedulerTask
             return equipment;
         }
 
-        //public bool MayOperationPerfomed()
-        //{
-        //    bool flag = false;
-        //    if ((this.PreviousOperationIsEnd())&&(equipment.EqIsFree()))
-        //    {
-        //        flag = true;
-        //    }
-        //    return flag;
-        //}
+        public bool MayOperationPerformed(DateTime time_)
+        {
+            bool flag = false;
+            if ((this.PreviousOperationIsEnd(time_)) && (equipment.IsFree(time_,time_.Add(this.GetDuration()))))
+            {
+                flag = true;
+            }
+            return flag;
+        }
     }
     
 }

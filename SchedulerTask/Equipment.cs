@@ -14,29 +14,28 @@ namespace SchedulerTask
     public class Equipment
     {
         Calendar ca;
-        int eqid;
-        List<int> eqids;
-        bool individflag; //флаг единичного оборудования (false - оборудование атамарно)
-        public bool freeflag = true;
+        int eqid; //id оборудования
+        int num; //номер группы (для группового оборудования)
+        //bool individflag; //флаг единичного оборудования (false - оборудование атамарно)
+        bool freeflag = false; //флаг занятости оборудования; по умолчанию оборудование свободно; true - занято
         DateTime starttime, endtime; //начало и конец выполнения 
 
 
-        public Equipment(Calendar ca, int id, bool flag)
+        public Equipment(Calendar ca, int id, int num)
         {
             this.ca = ca;
             eqid = id;
-            individflag = flag;
+            this.num = num;
+
         }
 
         public DateTime StartTime
         {
-            // get { return starttime; }
             set { starttime = value; }
         }
 
         public DateTime EndTime
         {
-            // get { return starttime; }
             set { endtime = value; }
         }
 
@@ -46,21 +45,28 @@ namespace SchedulerTask
             return eqid;
         }
 
-        //узнать id конкретного оборудования в группе
-        public int GetID(int individpos)
+        //получить флаг занятости оборудования
+        public bool GetOcFlag()
         {
-            int id = eqids[individpos];
-            return id;
+            return freeflag;
         }
 
-        //узнать, единичное или атамарное оборудование
-        public bool GetFlag()
+        public void SetOcFlag(bool val)
         {
-            return individflag;
+            freeflag = val;
         }
+
+        ////узнать, единичное или атамарное оборудование
+        //public bool GetFlag()
+        //{
+        //    return individflag;
+        //}
 
         //назначить работу o с началом работы time; если работа назначилась - флаг true
-        public bool SetWork(DateTime time, AOperation o)
+
+        //назначить работу + вернуть флаг занятости
+
+        public bool SetWork(DateTime time, AOperation o, Equipment e)
         {
             bool flag;
 
@@ -69,7 +75,7 @@ namespace SchedulerTask
             {
                 StartTime = time;
                 EndTime = endtime;
-                ca.SetCalendar(time, o);
+                ca.SetCalendar(time, o,e);
                 flag = true;
                 return flag;
             }
@@ -84,12 +90,12 @@ namespace SchedulerTask
             else return false;
         }
 
-        public List<Equipment> GetIndEquipment()
-        {
-            List<Equipment> eqlist = new List<Equipment>();
-            if (individflag == true) eqlist.Add(this);
-            //else eqlist.Add
-            return eqlist;
-        }
+        //public List<Equipment> GetIndEquipment()
+        //{
+        //    List<Equipment> eqlist = new List<Equipment>();
+        //    if (individflag == true) eqlist.Add(this);
+        //    //else eqlist.Add
+        //    return eqlist;
+        //}
     }
 }
