@@ -17,9 +17,9 @@ namespace SchedulerTask
         bool IsEnd(DateTime time_);
         bool IsEnabled();
         //void SetEnd(bool end_);
-        bool PreviousOperationIsEnd();
+        bool PreviousOperationIsEnd(DateTime time_);
         Equipment GetEquipment();
-        bool MayOperationPerfomed(DateTime time_);
+        bool MayOperationPerformed(DateTime time_);
     }
 
     class Operation : AOperation//add equipment???????? and MayOperationPerformed
@@ -108,12 +108,12 @@ namespace SchedulerTask
         //    end = end_;
         //}
 
-        public bool PreviousOperationIsEnd()
+        public bool PreviousOperationIsEnd(DateTime time_)
         {
             bool flag = true;
             foreach (AOperation prev in PreviousOperations)
             {
-                if (prev.IsEnd() == false)
+                if (prev.IsEnd(time_) == false)
                 {
                     flag = false;
                     break;
@@ -130,7 +130,7 @@ namespace SchedulerTask
         public bool MayOperationPerformed(DateTime time_)
         {
             bool flag = false;
-            if ((this.PreviousOperationIsEnd()) && (equipment.IsFree(time_,time_.Add(this.GetDuration()))))
+            if ((this.PreviousOperationIsEnd(time_)) && (equipment.IsFree(time_,time_.Add(this.GetDuration()))))
             {
                 flag = true;
             }
