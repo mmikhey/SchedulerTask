@@ -14,7 +14,7 @@ namespace SchedulerTask
         bool IsInterrupted();
         DateTime GetTimeExecution();
         void SetTimeExecution(TimeSpan time_);
-        bool IsEnd();
+        bool IsEnd(DateTime time_);
         bool IsEnabled();
         //void SetEnd(bool end_);
         bool PreviousOperationIsEnd();
@@ -92,13 +92,12 @@ namespace SchedulerTask
         //если операция поставлена в расписание и момент времени запроса
         //больше или равен моменту окончания операции(время начала + время длительности
 
-        public bool IsEnd()
+        public bool IsEnd(DateTime time_)
         {
             //return end;
             bool end=false;
             if (this.IsEnabled())
             {
-
             }
             return end;
 
