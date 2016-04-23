@@ -36,14 +36,15 @@ namespace SchedulerTask
             else return false;
         }
 
-        // "установить" календарь : время начала выполнения, операция
-        public void SetCalendar(DateTime time, AOperation o)
+        // "установить" календарь : время начала выполнения, операция, оборудование
+        public void SetCalendar(DateTime time, AOperation o, Equipment e)
         {
             int index = FindInterval(time);
             DateTime endtime = time.Add(o.GetDuration());
             if (EqIsFree(time, endtime))
             {
                 calendar[index].SetFlag(false);
+                e.SetOcFlag(true);
             }
         }
 
