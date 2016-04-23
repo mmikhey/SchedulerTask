@@ -32,7 +32,8 @@ namespace SchedulerTask
         private List<AOperation> PreviousOperations;
         //private bool end;//operation is over
         private Equipment equipment;
-        private EquipmentManager manager;
+        //private EquipmentManager manager;
+        private List<Interval> intervals;
 
         public Operation(int duration_, int time_min_, int time_max_, bool interrupted_, List<AOperation> Prev,Equipment equipment_)
         {
@@ -51,6 +52,10 @@ namespace SchedulerTask
 
         }
 
+        public void AddInterval(Interval interval)
+        {
+            intervals.Add(interval);
+        }
         public TimeSpan GetDuration()
         {
             return duration;
@@ -86,6 +91,14 @@ namespace SchedulerTask
         public bool IsEnabled()
         {
             bool flag = false;
+            if (intervals.Count() == 0)
+            {
+                flag = false;
+            }
+            else
+            {
+                flag = true;
+            }
             return flag;
         }
 
@@ -98,6 +111,18 @@ namespace SchedulerTask
             bool end=false;
             if (this.IsEnabled())
             {
+                DateTime tmp = intervals[0].GetEndTime();
+                for (int i=0;i<intervals.Count()-1;i++)
+                { 
+                    if (intervals[i].GetEndTime().CompareTo(intervals[i+1])>0)
+                    {
+                        tmp = intervals[i].GetEndTime();
+                    }
+                }
+                if ((time_.CompareTo(tmp) > 0)||(time_.CompareTo(tmp) == 0))
+                {
+                    end = true;
+                }
             }
             return end;
 
