@@ -32,12 +32,8 @@ namespace SchedulerTask
         private List<AOperation> PreviousOperations;
         //private bool end;//operation is over
         private Equipment equipment;
-<<<<<<< HEAD
-        private EquipmentManager manager;
-=======
         //private EquipmentManager manager;
         private List<Interval> intervals;
->>>>>>> refs/remotes/origin/master
 
         public Operation(int duration_, int time_min_, int time_max_, bool interrupted_, List<AOperation> Prev,Equipment equipment_)
         {
@@ -56,13 +52,11 @@ namespace SchedulerTask
 
         }
 
-<<<<<<< HEAD
-=======
         public void AddInterval(Interval interval)
         {
             intervals.Add(interval);
         }
->>>>>>> refs/remotes/origin/master
+
         public TimeSpan GetDuration()
         {
             return duration;
@@ -98,8 +92,6 @@ namespace SchedulerTask
         public bool IsEnabled()
         {
             bool flag = false;
-<<<<<<< HEAD
-=======
             if (intervals.Count() == 0)
             {
                 flag = false;
@@ -108,7 +100,6 @@ namespace SchedulerTask
             {
                 flag = true;
             }
->>>>>>> refs/remotes/origin/master
             return flag;
         }
 
@@ -121,8 +112,6 @@ namespace SchedulerTask
             bool end=false;
             if (this.IsEnabled())
             {
-<<<<<<< HEAD
-=======
                 DateTime tmp = intervals[0].GetEndTime();
                 for (int i=0;i<intervals.Count()-1;i++)
                 { 
@@ -135,7 +124,6 @@ namespace SchedulerTask
                 {
                     end = true;
                 }
->>>>>>> refs/remotes/origin/master
             }
             return end;
 

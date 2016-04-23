@@ -31,11 +31,7 @@ namespace SchedulerTask
                 DateTime startTime = currenTime;
                 DateTime endTime = currenTime.Add(operation.GetDuration());
 
-<<<<<<< HEAD
                 if (operation.PreviousOperationIsEnd(currenTime) && operation.GetEquipment().GetOcFlag() &&
-=======
-                if (operation.PreviousOperationIsEnd() && operation.GetEquipment().freeflag &&
->>>>>>> refs/remotes/origin/master
                     calendar.EqIsFree(startTime, endTime))
                 {
                     front.Add(operation);
