@@ -8,6 +8,7 @@ namespace SchedulerTask
 {
     public interface AOperation
     {
+        void AddInterval(Interval interval);
         TimeSpan GetDuration();
         DateTime GetTimeMin();
         DateTime GetTimeMax();
