@@ -33,8 +33,31 @@ namespace SchedulerTask
         public bool EqIsFree(DateTime time1, DateTime time2)
         {
             int index = FindInterval(time1);
-            if ((time1 >= calendar[index].GetStartTime()) & (calendar[index].GetEndTime() <= time2) & (calendar[index].GetOccupiedFlag() == true)) return true;
-            else return false;
+
+            //если интервал времени от time1 до time2 укладывается в один интервал
+            if ((time1 >= calendar[index].GetStartTime()) && (calendar[index].GetEndTime() >= time2))
+            {
+                if (calendar[index].GetOccupiedFlag() == true) return true;
+                else return false;
+            }
+
+            //если интервал времени от time1 до time2 не укладывается в один интервал
+            else
+            {
+                int ind; // индекс интервала, в котором "заканчивается" time2
+                ind = index;
+                while (!((calendar[ind].GetStartTime() <= time2) &&
+                    (calendar[ind].GetEndTime() >= time2))) ind++;
+
+                int count = 0;
+                int n = ind - index + 1; //число интервалов, в которые попадает отрезок времени от time1 до time2
+                for (int i = index; i < ind; i++)
+                    if (calendar[i].GetOccupiedFlag() == true) count++;
+
+                if (count == n) return true;
+                else return false;
+            }
+
         }
 
         /// <summary>
@@ -88,17 +111,21 @@ namespace SchedulerTask
                     ind = index;
                     while (!((calendar[ind].GetStartTime() <= endtime) && (calendar[ind].GetEndTime() >= endtime))) ind++;
 
-
                     List<int> indexlist = new List<int>();
                     for (int i = index; i < ind; i++)
                         indexlist.Add(i);
 
-                    if (EqIsFree(indexlist)) 
+                    if (EqIsFree(indexlist))
                     {
                         for (int i = index; i < ind; i++)
-                        o.AddInterval(calendar[i]);
+                        {
+                            o.AddInterval(calendar[i]);
+                            calendar[i].SetFlag(false);
+                        }
+
                         return true;
                     }
+
                     else return false;
                 }
 
