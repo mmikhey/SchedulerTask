@@ -17,7 +17,7 @@ namespace SchedulerTask
         int eqid; //id оборудования
         int num; //номер группы (для группового оборудования)
         //bool individflag; //флаг единичного оборудования (false - оборудование атамарно)
-        bool freeflag = false; //флаг занятости оборудования; по умолчанию оборудование свободно; true - занято
+        bool freeflag = true;
         DateTime starttime, endtime; //начало и конец выполнения 
 
 
@@ -26,7 +26,6 @@ namespace SchedulerTask
             this.ca = ca;
             eqid = id;
             this.num = num;
-
         }
 
         public DateTime StartTime
@@ -39,34 +38,26 @@ namespace SchedulerTask
             set { endtime = value; }
         }
 
-        //получить id оборудования (если оборудование групповое, то возвращается id группы оборудования)
+        /// <summary>
+        /// получить id оборудования (если оборудование групповое, то возвращается id группы оборудования)
+        /// </summary>      
         public int GetID()
         {
             return eqid;
         }
 
-        //получить флаг занятости оборудования
+        /// <summary>
+        /// получить флаг занятости
+        /// true - свободно
+        /// false - занято
+        /// </summary> 
         public bool GetOcFlag()
         {
             return freeflag;
         }
 
-        public void SetOcFlag(bool val)
-        {
-            freeflag = val;
-        }
-
-        ////узнать, единичное или атамарное оборудование
-        //public bool GetFlag()
-        //{
-        //    return individflag;
-        //}
-
         //назначить работу o с началом работы time; если работа назначилась - флаг true
-
-        //назначить работу + вернуть флаг занятости
-
-        public bool SetWork(DateTime time, AOperation o, Equipment e)
+        public bool SetWork(DateTime time, AOperation o)
         {
             bool flag;
 
@@ -75,7 +66,7 @@ namespace SchedulerTask
             {
                 StartTime = time;
                 EndTime = endtime;
-                ca.SetCalendar(time, o,e);
+                ca.SetCalendar(time, o);
                 flag = true;
                 return flag;
             }
@@ -83,7 +74,10 @@ namespace SchedulerTask
 
         }
 
-        //проверить доступность оборудования в указанный промежуток времени; true - оборудование доступно; false - занято
+        /// <summary>
+        /// проверка доступности оборудования в указанный промежуток времени (от time до endtime); 
+        /// true - оборудование доступно; false - занято
+        /// </summary>        
         public bool IsFree(DateTime time, DateTime endtime)
         {
             if (ca.EqIsFree(time, endtime)) return true;
