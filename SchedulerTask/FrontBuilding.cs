@@ -31,7 +31,7 @@ namespace SchedulerTask
                 DateTime startTime = currenTime;
                 DateTime endTime = currenTime.Add(operation.GetDuration());
 
-                if (operation.PreviousOperationIsEnd(currenTime) && operation.GetEquipment().GetOcFlag() &&
+                if (operation.PreviousOperationIsEnd(currenTime) && operation.GetEquipment().IsFree(startTime, endTime) &&
                     calendar.EqIsFree(startTime, endTime))
                 {
                     front.Add(operation);

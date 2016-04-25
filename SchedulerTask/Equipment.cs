@@ -1,6 +1,4 @@
-﻿
-
-namespace SchedulerTask
+﻿namespace SchedulerTask
 {
     using System;
     using System.Collections.Generic;
@@ -13,12 +11,10 @@ namespace SchedulerTask
     /// </summary>
     public class Equipment
     {
-        Calendar ca;
+        Calendar ca; //календарь для текущего оборудования
         int eqid; //id оборудования
         int num; //номер группы (для группового оборудования)
-        //bool individflag; //флаг единичного оборудования (false - оборудование атамарно)
-        bool freeflag = true;
-        DateTime starttime, endtime; //начало и конец выполнения 
+        DateTime starttime, endtime; //начало и конец выполнения операции на данном оборудовании
 
 
         public Equipment(Calendar ca, int id, int num)
@@ -46,32 +42,20 @@ namespace SchedulerTask
             return eqid;
         }
 
+
         /// <summary>
-        /// получить флаг занятости
-        /// true - свободно
-        /// false - занято
+        /// можно ли назначить работу o с началом работы starttime? 
+        /// да - вернем true
+        /// нет - вернем false
         /// </summary> 
-        public bool GetOcFlag()
+        public bool CanSetWork(DateTime starttime, AOperation o)
         {
-            return freeflag;
-        }
-
-        //назначить работу o с началом работы time; если работа назначилась - флаг true
-        public bool SetWork(DateTime time, AOperation o)
-        {
-            bool flag;
-
-            DateTime endtime = time.Add(o.GetDuration()); //время окончания операции
-            if (ca.EqIsFree(time, endtime))
+            if (ca.SetCalendar(starttime, o))
             {
-                StartTime = time;
-                EndTime = endtime;
-                ca.SetCalendar(time, o);
-                flag = true;
-                return flag;
+                return true;
             }
-            else { flag = false; return flag; }
 
+            else return false;
         }
 
         /// <summary>

@@ -49,17 +49,8 @@ namespace SchedulerTask
 
             foreach (Equipment equipment in e)
             {
-                //if (equipment.GetFlag() == false)
-                //{
-                //    List<Equipment> eqlist = equipment.GetIndEquipment();
-                //    for (int i = 0; i < eqlist.Count; i++)
-                //        if (eqlist[i].IsFree(starttime, endtime)) indexeslist.Add(equipment.GetID(i));
-                //}
-
                 if (equipment.IsFree(starttime, endtime)) indexeslist.Add(equipment.GetID());
             }
-
-
             return indexeslist;
         }
     }
