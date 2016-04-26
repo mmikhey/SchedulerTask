@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calendar.cs" />
+    <Compile Include="Decision.cs" />
     <Compile Include="Equipment.cs" />
     <Compile Include="EquipmentManager.cs" />
     <Compile Include="Event.cs" />
