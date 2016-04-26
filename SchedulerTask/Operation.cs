@@ -14,7 +14,6 @@ namespace SchedulerTask
         bool IsInterrupted();
         bool IsEnd(DateTime time_);
         bool IsEnabled();
-        //void SetEnd(bool end_);
         bool PreviousOperationIsEnd(DateTime time_);
         Equipment GetEquipment();
     }
