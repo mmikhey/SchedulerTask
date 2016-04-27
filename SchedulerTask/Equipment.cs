@@ -14,6 +14,7 @@
         Calendar ca; //календарь для текущего оборудования
         int eqid; //id оборудования
         int num; //номер группы (для группового оборудования)
+        bool occflag; //флаг занятости оборудования; true - свободно; false - занято;
         DateTime starttime, endtime; //начало и конец выполнения операции на данном оборудовании
 
 
@@ -35,11 +36,37 @@
         }
 
         /// <summary>
+        /// получить календарь оборудования 
+        /// </summary>   
+        public Calendar GetCalendar()
+        {
+            return ca;
+        }
+
+        /// <summary>
         /// получить id оборудования (если оборудование групповое, то возвращается id группы оборудования)
         /// </summary>      
         public int GetID()
         {
             return eqid;
+        }
+
+        /// <summary>
+        /// получить номер типа оборудования 
+        /// </summary>  
+        public int GetNum()
+        {
+            return num;
+        }
+
+        public bool GetOcFlag()
+        {
+            return occflag;
+        }
+
+        public void SetOcFlag(bool val)
+        {
+            occflag = val;
         }
 
 
@@ -50,7 +77,9 @@
         /// </summary> 
         public bool CanSetWork(DateTime starttime, AOperation o)
         {
-            if (ca.SetCalendar(starttime, o))
+            int index;
+
+            if (ca.IsInterval(starttime, out index))
             {
                 return true;
             }
@@ -59,21 +88,14 @@
         }
 
         /// <summary>
-        /// проверка доступности оборудования в указанный промежуток времени (от time до endtime); 
+        /// проверка доступности оборудования;
         /// true - оборудование доступно; false - занято
         /// </summary>        
-        public bool IsFree(DateTime time, DateTime endtime)
+        public bool IsFree()
         {
-            if (ca.EqIsFree(time, endtime)) return true;
+            if (occflag == true) return true;
             else return false;
         }
 
-        //public List<Equipment> GetIndEquipment()
-        //{
-        //    List<Equipment> eqlist = new List<Equipment>();
-        //    if (individflag == true) eqlist.Add(this);
-        //    //else eqlist.Add
-        //    return eqlist;
-        //}
     }
 }
