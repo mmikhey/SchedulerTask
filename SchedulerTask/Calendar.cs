@@ -15,12 +15,11 @@ namespace SchedulerTask
     public class Calendar
     {
         List<Interval> calendar;
-        Equipment eq;
+        //Equipment eq;
 
-        public Calendar(List<Interval> calendar, Equipment eq)
+        public Calendar(List<Interval> calendar)
         {
             this.calendar = calendar;
-            this.eq = eq;
 
             for (int i = 0; i < calendar.Count; i++)
                 if (calendar[i].GetEndTime() >= calendar[i + 1].GetStartTime())
@@ -28,160 +27,93 @@ namespace SchedulerTask
         }
 
         /// <summary>
-        /// узнать, свободно ли оборудование в промежуток времени (от time1 до time2)
+        /// возвращаем true, если попали хоть в один из интервалов календаря;
+        /// false - иначе;
+        /// дополнительно возвращаем индекс интервала (-1 означает, что ни в какой из интервалов не попали)
         /// </summary>
-        public bool EqIsFree(DateTime time1, DateTime time2)
+        public bool IsInterval(DateTime T, out int intervalindex)
         {
-            int index = FindInterval(time1);
-
-            //если интервал времени от time1 до time2 укладывается в один интервал
-            if ((time1 >= calendar[index].GetStartTime()) && (calendar[index].GetEndTime() >= time2))
-            {
-                if (calendar[index].GetOccupiedFlag() == true) return true;
-                else return false;
-            }
-
-            //если интервал времени от time1 до time2 не укладывается в один интервал
-            else
-            {
-                int ind; // индекс интервала, в котором "заканчивается" time2
-                ind = index;
-                while (!((calendar[ind].GetStartTime() <= time2) &&
-                    (calendar[ind].GetEndTime() >= time2))) ind++;
-
-                int count = 0;
-                int n = ind - index + 1; //число интервалов, в которые попадает отрезок времени от time1 до time2
-                for (int i = index; i < ind; i++)
-                    if (calendar[i].GetOccupiedFlag() == true) count++;
-
-                if (count == n) return true;
-                else return false;
-            }
-
-        }
-
-        /// <summary>
-        /// проверить, свободно ли оборудование для указанных интервалов (по индексу интервала)
-        /// возвращаем true, если оборудование свободно для всех интервалов
-        /// </summary>
-        public bool EqIsFree(List<int> indexlist)
-        {
-            int n = indexlist.Count;
-            int count = 0;
-            foreach (int i in indexlist)
+            for (int i = 0; i < calendar.Count; i++)
             {
                 DateTime starttime = calendar[i].GetStartTime();
                 DateTime endtime = calendar[i].GetEndTime();
-                if (EqIsFree(starttime, endtime)) count++;
+                if ((T >= starttime) && (T <= endtime))
+                { intervalindex = i; return true; }
             }
 
-            if (count == n) return true;
-            else return false;
+            intervalindex = -1;
+            return false;
         }
 
 
         /// <summary>
-        /// "установить" календарь: время начала выполнения, операция
-        /// возвращаем true, если установили операцию, false - иначе
-        /// </summary>        
-        public bool SetCalendar(DateTime starttime, AOperation o)
-        {
-            int index = FindInterval(starttime);
-            DateTime endtime = starttime.Add(o.GetDuration());
-
-            //можно ли уложить операцию без прерывания
-            if (calendar[index].GetEndTime() - calendar[index].GetStartTime() >= o.GetDuration())
-            {
-                if (EqIsFree(starttime, endtime))
-                {
-                    calendar[index].SetFlag(false);
-                    o.AddInterval(calendar[index]);
-                    return true;
-                }
-
-                else return false;
-            }
-
-                //ищем интервалы
-            else
-            {
-                if (o.IsInterrupted())
-                {
-                    int ind; // индекс последнего интервала, в который уложится операция
-                    ind = index;
-                    while (!((calendar[ind].GetStartTime() <= endtime) && (calendar[ind].GetEndTime() >= endtime))) ind++;
-
-                    List<int> indexlist = new List<int>();
-                    for (int i = index; i < ind; i++)
-                        indexlist.Add(i);
-
-                    if (EqIsFree(indexlist))
-                    {
-                        for (int i = index; i < ind; i++)
-                        {
-                            o.AddInterval(calendar[i]);
-                            calendar[i].SetFlag(false);
-                        }
-
-                        return true;
-                    }
-
-                    else return false;
-                }
-
-                else return false;
-            }
-
-        }
-
-        /// <summary>
-        /// узнать, свободно ли оборудование на данный момент:
-        /// да - выдать момент окончания времени работы, иначе - выдать ближ.доступное время для занятия оборудования;
+        /// узнать, есть ли свободные интервалы времени;
         /// выходные параметры:
-        /// bool occflag - флаг занятости оборудования (false - свободно, true - занято)
-        /// DateTime operationtime - ближайшее время начала операции (для первого случая) или время окончания операции (для второго случая)
+        /// bool occflag - флаг занятости (true - свободно, false - занято);
+        /// operationtime - время окончания операции (для первого случая) или  ближайшее время начала операции (для второго случая), является списком, для единичного оборудования брать 1ый элемент листа;
+        /// List<int> equiplist - список ID оборудования, календари которых имеют интервалы, в которые попадает T, если таких нет, возвращаем список, содержащий -1
         /// </summary>
-        public void GetTimeofRelease(DateTime T, AOperation o, out bool occflag, out DateTime operationtime)
+        public void IsFree(DateTime T, AOperation o, EquipmentManager EM, int id, out bool occflag, out List<DateTime> operationtime, out List<int> equipIDlist)
         {
             int index;      // индекс интервала, в который можно поставить операцию (либо ближайший интервал)
             TimeSpan lasting; //"длительность" интервала
             TimeSpan t = o.GetDuration();//длительность операции
-            TimeSpan tmptime;   //остаток для другого интервала   
             DateTime endtime;
             DateTime startime;
+            operationtime = new List<DateTime>();
+            equipIDlist = new List<int>();
 
-            if (EqIsFree(T, T.Add(o.GetDuration())))
+            //если оборудование атамарно
+            if (!(EM.IsGroup(id)))
             {
-                occflag = false;
-                index = FindInterval(T);
-                endtime = calendar[index].GetEndTime();
-                startime = calendar[index].GetStartTime();
-                lasting = endtime.Subtract(startime);
+                if (IsInterval(T, out index))
+                {
+                    occflag = true;
+                    equipIDlist.Add(id);
+                    endtime = calendar[index].GetEndTime();
+                    startime = calendar[index].GetStartTime();
+                    lasting = endtime.Subtract(startime);
 
-                if (t <= lasting) operationtime = startime + t;
+                    if (t <= lasting) operationtime.Add(startime + t);
+                    else operationtime.Add(GetTimeofRelease(T, o));
+                }
+
                 else
                 {
-                    tmptime = t;
-
-                    while (tmptime.CompareTo(lasting) == 1)
-                    {
-                        tmptime = tmptime.Subtract(lasting);
-                        if (index == calendar.Count - 1) index = 0;
-                        else index += index;
-                        endtime = calendar[index].GetEndTime();
-                        startime = calendar[index].GetStartTime();
-                        lasting = endtime.Subtract(startime);
-                    }
-
-                    operationtime = startime + tmptime;
+                    occflag = false;
+                    equipIDlist.Add(-1);
+                    operationtime.Add(GetNearestStart(T));
                 }
             }
 
+                //если оборудование групповое
             else
             {
-                index = FindInterval(T);
-                occflag = true;
-                operationtime = calendar[index].GetStartTime();
+                List<Equipment> elist = new List<Equipment>(EM.GetEquipments());
+                bool eoccflag = false;
+
+                foreach (Equipment e in elist)
+                {
+                    if (e.GetCalendar().IsInterval(T, out index)) eoccflag = true;
+                }
+
+                if (eoccflag == false)
+                {
+                    equipIDlist.Add(-1);
+                    occflag = false;
+                    operationtime.Add(GetMinNearestStart(T, elist));
+                }
+
+                else
+                {
+                    occflag = true;
+                    foreach (Equipment e in elist)
+                        if (e.GetCalendar().IsInterval(T, out index))
+                        {
+                            operationtime.Add(e.GetCalendar().GetTimeofRelease(T, o));
+                            equipIDlist.Add(e.GetID());
+                        }
+                }
             }
 
         }
@@ -208,5 +140,59 @@ namespace SchedulerTask
 
             return index;
         }
+
+        /// <summary>
+        /// вернуть время, в которое закончится выполнение операции;
+        /// T - время начала операции o
+        /// </summary>   
+        public DateTime GetTimeofRelease(DateTime T, AOperation o)
+        {
+            DateTime operationtime;
+            TimeSpan t = o.GetDuration();
+            int index = FindInterval(T);
+            DateTime endtime = calendar[index].GetEndTime();
+            DateTime startime = calendar[index].GetStartTime();
+            TimeSpan lasting = endtime.Subtract(startime);
+            TimeSpan tmptime = t;
+
+            while (tmptime.CompareTo(lasting) == 1)
+            {
+                tmptime = tmptime.Subtract(lasting);
+                if (index == calendar.Count - 1) index = 0;
+                else index += index;
+                endtime = calendar[index].GetEndTime();
+                startime = calendar[index].GetStartTime();
+                lasting = endtime.Subtract(startime);
+            }
+            operationtime = startime + tmptime;
+
+            return operationtime;
+        }
+
+        /// <summary>
+        /// вернуть время ближайшего возможного времени начала выполнения операции
+        /// T - время начала операции o
+        /// </summary> 
+        public DateTime GetNearestStart(DateTime T)
+        {
+            int index = FindInterval(T);
+            DateTime operationtime = calendar[index].GetStartTime();
+            return operationtime;
+        }
+
+        /// <summary>
+        /// вернуть минимальное время ближайшего возможного времени начала выполнения операции
+        /// !!!!использовать для группового оборудования!!!!!!
+        /// </summary> 
+        public DateTime GetMinNearestStart(DateTime T, List<Equipment> elist)
+        {
+            DateTime min = new DateTime();
+
+            foreach (Equipment e in elist)
+                if (e.GetCalendar().GetNearestStart(T) <= min) min = e.GetCalendar().GetNearestStart(T);
+
+            return min;
+        }
+
     }
 }
