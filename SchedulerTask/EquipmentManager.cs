@@ -77,7 +77,19 @@ namespace SchedulerTask
 
             return false;
         }
-        
+
+        /// <summary>
+        /// Найти подходящее оборудование из списка по ID;
+        /// !!! Перед работой с методом проверить выходной флаг; флаг = true, если оборудование нашлось по ID
+        /// </summary>
+        public Equipment GetEquipByID(int id, out bool flag)
+        {
+            foreach (Equipment e in eq)
+                if (e.GetID() == id) { flag = true; return e; }
+
+            flag = false;
+            return new Equipment(new Calendar(new List<Interval>()), -1, -1);
+        }
 
         /// <summary>
         /// выходные параметры:
