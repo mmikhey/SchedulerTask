@@ -1,4 +1,5 @@
-﻿
+﻿using System.Collections.Generic;
+
 namespace SchedulerTask
 {
 
@@ -13,17 +14,21 @@ namespace SchedulerTask
     public class Interval
     {
         DateTime starttime;
-        bool occflag;//флаг занятости; true - оборудование свободно, false - занято
         DateTime endtime;
+        Dictionary<int, bool> tacts; //словарь часовых тактов; int - значение часа; bool - значение занятости в течение часа (true - свободно, false - занято)
+
+        public Interval(DateTime starttime, DateTime endtime)
+        {
+            this.starttime = starttime;
+            this.endtime = endtime;
+            tacts = new Dictionary<int, bool>();
+        }
 
         public DateTime GetStartTime()
         { return starttime; }
 
         public DateTime GetEndTime()
         { return endtime; }
-
-        public bool GetOccupiedFlag()
-        { return occflag; }
 
         public void SetStartTime(DateTime val)
         {
@@ -35,9 +40,23 @@ namespace SchedulerTask
             endtime = val;
         }
 
-        public void SetFlag(bool val)
+        /// <summary>
+        /// Узнать, свободен ли интервал от времени t1 до t2.
+        /// Если хоть 1 такт занят - вернем false. Весь промежуток свободен - вернем true.
+        /// </summary>
+        public bool IsFree(DateTime t1, DateTime t2)
         {
-            occflag = val;
+            int T1 = t1.Hour;
+            int T2 = t2.Hour;
+            bool occflag;
+
+            for (int i = T1; i < T2; i++)
+            {
+                tacts.TryGetValue(i, out occflag);
+                if (!occflag) return false;
+            }
+
+            return true;
         }
     }
 }

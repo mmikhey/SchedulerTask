@@ -49,7 +49,7 @@ namespace SchedulerTask
             if (index == -1)
             {
                 for (int i = 0; i < calendarintervals.Count; i++)
-                    if ((T > calendarintervals[i].GetEndTime()) && (T < calendarintervals[i + 1].GetStartTime())) { index = i; break; }
+                    if ((T > calendarintervals[i].GetEndTime()) && (T < calendarintervals[i + 1].GetStartTime())) { index = i + 1; break; }
             }
 
             return index;
@@ -77,7 +77,19 @@ namespace SchedulerTask
 
             return false;
         }
-        
+
+        /// <summary>
+        /// Найти подходящее оборудование из списка по ID;
+        /// !!! Перед работой с методом проверить выходной флаг; флаг = true, если оборудование нашлось по ID
+        /// </summary>
+        public Equipment GetEquipByID(int id, out bool flag)
+        {
+            foreach (Equipment e in eq)
+                if (e.GetID() == id) { flag = true; return e; }
+
+            flag = false;
+            return new Equipment(new Calendar(new List<Interval>()), -1, -1);
+        }
 
         /// <summary>
         /// выходные параметры:
@@ -101,8 +113,19 @@ namespace SchedulerTask
             //int n = IDlist.Count;
             equipID = IDlist[0];
             ca.IsInterval(T, out index);
-            endtime = calendarintervals[index].GetEndTime();
-            startime = calendarintervals[index].GetStartTime();
+
+            if (index == -1)
+            {
+                index = ca.FindInterval(T);
+                endtime = calendarintervals[index].GetEndTime();
+                startime = calendarintervals[index].GetStartTime();
+            }
+
+            else
+            {
+                endtime = calendarintervals[index].GetEndTime();
+                startime = calendarintervals[index].GetStartTime();
+            }
 
             if (ca.IsInterval(T, out index))
             {
