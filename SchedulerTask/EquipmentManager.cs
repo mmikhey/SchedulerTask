@@ -88,7 +88,7 @@ namespace SchedulerTask
                 if (e.GetID() == id) { flag = true; return e; }
 
             flag = false;
-            return new Equipment(new Calendar(new List<Interval>()), -1, -1);
+            return new Equipment(new Calendar(new List<Interval>()), -1, -1, "lala","lala");
         }
 
         /// <summary>
