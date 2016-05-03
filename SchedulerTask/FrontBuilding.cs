@@ -9,54 +9,71 @@ namespace SchedulerTask
     class FrontBuilding
     {
         private Calendar calendar;
+        private List<Operation> operations;
+        private EquipmentManager equipmentManager;
 
-        public FrontBuilding(Calendar calendar)
+        public FrontBuilding(Calendar calendar, List<Operation> operations, EquipmentManager equipmentManager)
         {
             this.calendar = calendar;
+            this.operations = operations;
+            this.equipmentManager = equipmentManager;
         }
 
-        /// <summary>
-        /// Построить фронт
-        /// </summary>
-        /// <param name="operations">Невыполненные операции</param>
-        /// <param name="currenTime">Текущее время</param>
-        /// <param name="events">Список событий (будут добавлены новые события)</param>
-        public void BuildFront(List<Operation> operations, DateTime currenTime, List<Event> events)
+        public void Build()
         {
-            List<Operation> front = new List<Operation>();
+            List<Event> events = new List<Event>();
 
-            // Формирование фронта
+            // Находим событие с самым ранним временем начала
+            DateTime minTime = DateTime.MaxValue;
             foreach (Operation operation in operations)
             {
-                DateTime startTime = currenTime;
-                DateTime endTime = currenTime.Add(operation.GetDuration());
-
-                if (operation.PreviousOperationIsEnd(currenTime) && operation.GetEquipment().IsFree(startTime, endTime) &&
-                    calendar.EqIsFree(startTime, endTime))
+                if (operation.GetTimeMin() < minTime)
                 {
-                    front.Add(operation);
+                    minTime = operation.GetTimeMin();
                 }
             }
+            events.Add(new Event(minTime));
 
-            // Упорядочение фронта
-            //SortFront.Sort(front);
 
-            // Назначение операций
-            foreach (Operation operation in front)
+            while (events.Count != 0)
             {
-                bool occflag;
-                DateTime operationtime;
-                calendar.GetTimeofRelease(currenTime, operation, out occflag, out operationtime);
-                if (!occflag)
+                List<Operation> front = new List<Operation>();
+
+                // Формирование фронта
+                foreach (Operation operation in operations)
                 {
-                    // Событие на момент завершения выполнения операции
-                    events.Add(new Event(operationtime.Add(operation.GetDuration())));
+                    if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time))
+                    {
+                        bool occupation;
+                        DateTime operationTime;
+                        int equipmentID;
+                        equipmentManager.IsFree(events[0].Time, operation, calendar, operation.GetEquipment(), out occupation, out operationTime, out equipmentID);
+                        if(occupation) front.Add(operation);
+                    }
                 }
-                else
+
+                // Сортировка фронта
+                // ...
+
+                // Назначение операций
+                foreach (Operation operation in front)
                 {
-                    // Событие на момент появления возможности выполнения операции
-                    events.Add(new Event(operationtime));
+                    bool occupation;
+                    DateTime operationTime;
+                    int equipmentID;
+                    equipmentManager.IsFree(events[0].Time, operation, calendar, operation.GetEquipment(), out occupation, out operationTime, out equipmentID);
+
+                    if (occupation)
+                    {
+                        bool flafEq;
+                        operation.SetOperationInPlan(events[0].Time, operationTime, equipmentManager.GetEquipByID(equipmentID, out flafEq));
+                    }
+
+                    if (!events.Contains(new Event(operationTime))) events.Add(new Event(operationTime));
                 }
+
+                // Удаление текущего события
+                events.RemoveAt(0);
             }
         }
     }
