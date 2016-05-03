@@ -15,13 +15,17 @@ namespace SchedulerTask
     {
         DateTime starttime;
         DateTime endtime;
-        Dictionary<int, bool> tacts; //словарь часовых тактов; int - значение часа; bool - значение занятости в течение часа (true - свободно, false - занято)
+        Dictionary<int, bool> tacts; //словарь часовых тактов; int - значение часа; bool - значение занятости в течение часа 
+        //(true - свободно, false - занято); по умолчанию весь интервал, состоящий из тактов времени считается свободным
 
         public Interval(DateTime starttime, DateTime endtime)
         {
             this.starttime = starttime;
             this.endtime = endtime;
+
             tacts = new Dictionary<int, bool>();
+            for (int t = starttime.Hour; t < endtime.Hour; t++)
+                tacts.Add(t, true);
         }
 
         public DateTime GetStartTime()
@@ -57,6 +61,19 @@ namespace SchedulerTask
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Занять интервал от времени t1 до t2.
+        /// </summary>
+        public void OccupyHours(DateTime t1, DateTime t2)
+        {
+            for (int t = t1.Hour; t < t2.Hour; t++)
+            {
+                tacts.Remove(t);
+                tacts.Add(t, false);
+            }
+
         }
     }
 }

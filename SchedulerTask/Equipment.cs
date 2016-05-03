@@ -18,7 +18,7 @@
         DateTime starttime, endtime; //начало и конец выполнения операции на данном оборудовании
 
 
-        public Equipment(Calendar ca, int id, int num)
+        public Equipment(Calendar ca, int id, int num, string groupname, string individualname)
         {
             this.ca = ca;
             eqid = id;
