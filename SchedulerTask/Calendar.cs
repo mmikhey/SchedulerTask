@@ -45,79 +45,6 @@ namespace SchedulerTask
             return false;
         }
 
-
-        /// <summary>
-        /// узнать, есть ли свободные интервалы времени;
-        /// выходные параметры:
-        /// bool occflag - флаг занятости (true - свободно, false - занято);
-        /// operationtime - время окончания операции (для первого случая) или  ближайшее время начала операции (для второго случая), является списком, для единичного оборудования брать 1ый элемент листа;
-        /// List<int> equiplist - список ID оборудования, календари которых имеют интервалы, в которые попадает T, если таких нет, возвращаем список, содержащий -1
-        /// </summary>
-        public void IsFree(DateTime T, AOperation o, EquipmentManager EM, int id, out bool occflag, out List<DateTime> operationtime, out List<int> equipIDlist)
-        {
-            int index;      // индекс интервала, в который можно поставить операцию (либо ближайший интервал)
-            TimeSpan lasting; //"длительность" интервала
-            TimeSpan t = o.GetDuration();//длительность операции
-            DateTime endtime;
-            DateTime startime;
-            operationtime = new List<DateTime>();
-            equipIDlist = new List<int>();
-
-            //если оборудование атамарно
-            if (!(EM.IsGroup(id)))
-            {
-                if (IsInterval(T, out index))
-                {
-                    occflag = true;
-                    equipIDlist.Add(id);
-                    endtime = calendar[index].GetEndTime();
-                    startime = calendar[index].GetStartTime();
-                    lasting = endtime.Subtract(startime);
-
-                    if (t <= lasting) operationtime.Add(startime + t);
-                    else operationtime.Add(GetTimeofRelease(T, o));
-                }
-
-                else
-                {
-                    occflag = false;
-                    equipIDlist.Add(-1);
-                    operationtime.Add(GetNearestStart(T));
-                }
-            }
-
-                //если оборудование групповое
-            else
-            {
-                List<Equipment> elist = new List<Equipment>(EM.GetEquipments());
-                bool eoccflag = false;
-
-                foreach (Equipment e in elist)
-                {
-                    if (e.GetCalendar().IsInterval(T, out index)) eoccflag = true;
-                }
-
-                if (eoccflag == false)
-                {
-                    equipIDlist.Add(-1);
-                    occflag = false;
-                    operationtime.Add(GetMinNearestStart(T, elist));
-                }
-
-                else
-                {
-                    occflag = true;
-                    foreach (Equipment e in elist)
-                        if (e.GetCalendar().IsInterval(T, out index))
-                        {
-                            operationtime.Add(e.GetCalendar().GetTimeofRelease(T, o));
-                            equipIDlist.Add(e.GetID());
-                        }
-                }
-            }
-
-        }
-
         /// <summary>
         /// вернуть индекс интервала в календаре, в который попадает заданное время T
         /// если не попадает ни в один из интервалов - найти индекс ближайшего возможного
@@ -194,5 +121,26 @@ namespace SchedulerTask
             return min;
         }
 
+
+        public bool IsFree(DateTime T)
+        {
+            int index = FindInterval(T);
+            if (calendar[index].IsFree(T, T.AddHours(1))) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Занять интервал от времени t1 до t2.
+        /// </summary>
+        public void OccupyHours(DateTime t1, DateTime t2)
+        {
+            int index = FindInterval(t1);
+            calendar[index].OccupyHours(t1, t2);
+        }
+
+        public Interval GetInterval(int index)
+        {
+            return calendar[index];
+        }
     }
 }

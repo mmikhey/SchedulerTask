@@ -63,6 +63,8 @@ namespace SchedulerTask
             return true;
         }
 
+
+
         /// <summary>
         /// Занять интервал от времени t1 до t2.
         /// </summary>
@@ -70,8 +72,7 @@ namespace SchedulerTask
         {
             for (int t = t1.Hour; t < t2.Hour; t++)
             {
-                tacts.Remove(t);
-                tacts.Add(t, false);
+                tacts[t] = false;
             }
 
         }
