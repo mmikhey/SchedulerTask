@@ -27,7 +27,7 @@ namespace SchedulerTask
         private List<AOperation> PreviousOperations;
         private bool enable;
         private Equipment equipment;
-        Decision decision;
+        Decision decision = null;
 
         public Operation(int duration_, int time_min_, int time_max_, bool interrupted_, List<AOperation> Prev,Equipment equipment_)
         {
@@ -77,7 +77,7 @@ namespace SchedulerTask
             bool end = false;
             if (this.IsEnabled())
             {
-                if ((time_.CompareTo(decision.GetEndTime()) > 0) || (time_.CompareTo(decision.GetEndTime()) == 0))
+                if (time_>= decision.GetEndTime())
                 {
                     end = true;
                 }
