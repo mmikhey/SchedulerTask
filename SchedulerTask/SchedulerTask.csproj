@@ -47,6 +47,7 @@
     <Compile Include="EquipmentManager.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="FrontBuilding.cs" />
+    <Compile Include="FrontSort.cs" />
     <Compile Include="ICalendar.cs" />
     <Compile Include="Interval.cs" />
     <Compile Include="Operation.cs" />
