@@ -49,6 +49,7 @@ namespace SchedulerTask
                         int equipmentID;
                         equipmentManager.IsFree(events[0].Time, operation, calendar, operation.GetEquipment(), out occupation, out operationTime, out equipmentID);
                         if(occupation) front.Add(operation);
+
                     }
                 }
 
