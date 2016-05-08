@@ -9,6 +9,7 @@ namespace SchedulerTask
     public interface AOperation
     {
         TimeSpan GetDuration();
+        void SetOperationInPlan(DateTime real_start_time, DateTime real_end_time, Equipment real_equipment_id);
         bool IsEnd(DateTime time_);
         bool IsEnabled();
         bool PreviousOperationIsEnd(DateTime time_);
