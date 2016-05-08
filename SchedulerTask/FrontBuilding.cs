@@ -8,73 +8,75 @@ namespace SchedulerTask
     /// </summary>
     class FrontBuilding
     {
-        private Calendar calendar;
-        private List<Operation> operations;
+        //private Party party;
+        private List<AOperation> operations;
         private EquipmentManager equipmentManager;
 
-        public FrontBuilding(Calendar calendar, List<Operation> operations, EquipmentManager equipmentManager)
+        public FrontBuilding(/*Party party, */EquipmentManager equipmentManager)
         {
-            this.calendar = calendar;
-            this.operations = operations;
+            //this.party = party;
+            //operations = party.getPartyOperations();
             this.equipmentManager = equipmentManager;
         }
 
         public void Build()
         {
             List<Event> events = new List<Event>();
-
-            // Находим событие с самым ранним временем начала
-            DateTime minTime = DateTime.MaxValue;
-            foreach (Operation operation in operations)
-            {
-                if (operation.GetTimeMin() < minTime)
-                {
-                    minTime = operation.GetTimeMin();
-                }
-            }
-            events.Add(new Event(minTime));
-
+            //events.Add(new Event(party.getStartTimeParty());
 
             while (events.Count != 0)
             {
-                List<Operation> front = new List<Operation>();
+                List<AOperation> front = new List<AOperation>();
 
                 // Формирование фронта
-                foreach (Operation operation in operations)
+                foreach (AOperation operation in operations)
                 {
                     if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time))
                     {
-                        bool occupation;
                         DateTime operationTime;
                         int equipmentID;
-                        equipmentManager.IsFree(events[0].Time, operation, calendar, operation.GetEquipment(), out occupation, out operationTime, out equipmentID);
-                        if(occupation) front.Add(operation);
-
+                        if (equipmentManager.IsFree(events[0].Time, operation, out operationTime, out equipmentID))
+                        {
+                            front.Add(operation);
+                        }
+                        else
+                        {
+                            if (!events.Contains(new Event(operationTime)))
+                            {
+                                events.Add(new Event(operationTime));
+                            }
+                        }
                     }
                 }
 
                 // Сортировка фронта
-                // ...
+                //FrontSort.sort(front);
 
                 // Назначение операций
                 foreach (Operation operation in front)
                 {
-                    bool occupation;
                     DateTime operationTime;
                     int equipmentID;
-                    equipmentManager.IsFree(events[0].Time, operation, calendar, operation.GetEquipment(), out occupation, out operationTime, out equipmentID);
 
-                    if (occupation)
+                    if (equipmentManager.IsFree(events[0].Time, operation, out operationTime, out equipmentID))
                     {
                         bool flafEq;
-                        operation.SetOperationInPlan(events[0].Time, operationTime, equipmentManager.GetEquipByID(equipmentID, out flafEq));
+                        Equipment equipment = equipmentManager.GetEquipByID(equipmentID, out flafEq);
+                        operation.SetOperationInPlan(events[0].Time, operationTime, equipment);
+                        equipment.OccupyEquip(events[0].Time, operationTime);
                     }
 
-                    if (!events.Contains(new Event(operationTime))) events.Add(new Event(operationTime));
+                    if (!events.Contains(new Event(operationTime)))
+                    {
+                        events.Add(new Event(operationTime));
+                    }
                 }
 
                 // Удаление текущего события
                 events.RemoveAt(0);
+
+                // Сортировка events
+                events.Sort();
             }
         }
     }
