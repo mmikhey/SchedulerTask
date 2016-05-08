@@ -8,10 +8,11 @@ namespace SchedulerTask
 {
     class Decision
     {
-        private DateTime start_time;
-        private DateTime end_time;
-        private Equipment equipment_id;
-        private Operation op;
+        private DateTime start_time;//реальное время начала операции в расписании
+        private DateTime end_time;// реальное время окончания операции в расписании
+        private Equipment equipment_id;//id реального атомарного оборудования,
+                                        //на котором операция будет выполнена в расписании
+        private Operation op;//операция, для которой созданно данное решение
 
         public Decision(DateTime start_time_, DateTime end_time_, Equipment equipment_id_, Operation op_)
         {
@@ -20,18 +21,35 @@ namespace SchedulerTask
             equipment_id = equipment_id_;
             op = op_;
         }
+
+        /// <summary>
+        /// получить время начала операции в расписании
+        /// </summary>   
         public DateTime GetStartTime()
         {
             return start_time;
         }
+
+        /// <summary>
+        /// получить время окончания операции в расписании
+        /// </summary>   
         public DateTime GetEndTime()
         {
             return end_time;
         }
+
+        /// <summary>
+        /// получить id реального атомарного оборудования,
+        /// на котором операция будет выполнена в расписании
+        /// </summary>   
         public Equipment GetEquipment()
         {
             return equipment_id;
         }
+
+        /// <summary>
+        /// получить операцию, для которой созданно данное решение 
+        /// </summary>   
         public Operation GetOperation()
         {
             return op;
