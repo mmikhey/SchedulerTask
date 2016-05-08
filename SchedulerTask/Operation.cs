@@ -9,32 +9,26 @@ namespace SchedulerTask
     public interface AOperation
     {
         TimeSpan GetDuration();
-        DateTime GetTimeMin();
-        DateTime GetTimeMax();
-        bool IsInterrupted();
         bool IsEnd(DateTime time_);
         bool IsEnabled();
         bool PreviousOperationIsEnd(DateTime time_);
         Equipment GetEquipment();
     }
 
+    /// <summary>
+    /// операция
+    /// </summary>   
     class Operation : AOperation
     {
-        private TimeSpan duration;
-        private DateTime time_min;
-        private DateTime time_max;
-        private bool interrupted;
-        private List<AOperation> PreviousOperations;
-        private bool enable;
-        private Equipment equipment;
-        Decision decision = null;
+        private TimeSpan duration;//длительность операции
+        private List<AOperation> PreviousOperations;//список предыдущих операций
+        private bool enable;//поставлена ли оперция в расписание
+        private Equipment equipment;//обордование или группа оборудований, на котором может выполняться операция
+        Decision decision = null;//решение,создается,когда операция ставится в расписание
 
-        public Operation(int duration_, int time_min_, int time_max_, bool interrupted_, List<AOperation> Prev,Equipment equipment_)
+        public Operation(int duration_, List<AOperation> Prev,Equipment equipment_)
         {
             duration = new  TimeSpan(duration_);
-            time_min = new DateTime(time_min_);
-            time_max = new DateTime(time_max_);
-            interrupted = interrupted_;
             PreviousOperations = new List<AOperation>();
             foreach (Operation prev in Prev)
             {
@@ -44,34 +38,34 @@ namespace SchedulerTask
             equipment = equipment_;
         }
 
+        /// <summary>
+        /// получить длительность операции
+        /// </summary>   
         public TimeSpan GetDuration()
         {
             return duration;
         }
 
-        public DateTime GetTimeMin()
-        {
-            return time_min;
-        }
-
-        public DateTime GetTimeMax()
-        {
-            return time_max;
-        }
-
-        public bool IsInterrupted()
-        {
-            return interrupted;
-        }
+        /// <summary>
+        /// поставить операцию в расписание и создать решение
+        /// </summary>   
         public void SetOperationInPlan(DateTime real_start_time, DateTime real_end_time, Equipment real_equipment_id)
         {
             enable = true;
             decision= new Decision (real_start_time, real_end_time, real_equipment_id, this);
         }
+
+        /// <summary>
+        /// поставлена ли операция в расписание
+        /// </summary>  
         public bool IsEnabled()
         {
             return enable;
         }
+
+        /// <summary>
+        /// выполнилась ли операция к тому времени,которое подано на вход
+        /// </summary>  
         public bool IsEnd(DateTime time_)
         {
             bool end = false;
@@ -84,6 +78,10 @@ namespace SchedulerTask
             }
             return end;
         }
+
+        /// <summary>
+        /// выполнены ли предыдущие операции
+        /// </summary>  
         public bool PreviousOperationIsEnd(DateTime time_)
         {
             bool flag = true;
@@ -97,6 +95,10 @@ namespace SchedulerTask
             }
             return flag;
         }
+
+        /// <summary>
+        /// получить оборудование или группу оборудований, на котором может выполняться операция
+        /// </summary>  
         public Equipment GetEquipment()
         {
             return equipment;
