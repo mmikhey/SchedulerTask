@@ -8,21 +8,21 @@ namespace SchedulerTask
     /// </summary>
     class FrontBuilding
     {
-        //private Party party;
+        private Party party;
         private List<AOperation> operations;
         private EquipmentManager equipmentManager;
 
-        public FrontBuilding(/*Party party, */EquipmentManager equipmentManager)
+        public FrontBuilding(Party party, EquipmentManager equipmentManager)
         {
-            //this.party = party;
-            //operations = party.getPartyOperations();
+            this.party = party;
+            operations = party.getPartyOperations();
             this.equipmentManager = equipmentManager;
         }
 
         public void Build()
         {
             List<Event> events = new List<Event>();
-            //events.Add(new Event(party.getStartTimeParty());
+            events.Add(new Event(party.getStartTimeParty()));
 
             while (events.Count != 0)
             {
@@ -50,7 +50,7 @@ namespace SchedulerTask
                 }
 
                 // Сортировка фронта
-                //FrontSort.sort(front);
+                FrontSort.sortFront(front);
 
                 // Назначение операций
                 foreach (Operation operation in front)
