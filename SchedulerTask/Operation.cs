@@ -21,14 +21,18 @@ namespace SchedulerTask
     /// </summary>   
     class Operation : AOperation
     {
+        private int id;//id операции
+        private string name;//name операции
         private TimeSpan duration;//длительность операции
         private List<AOperation> PreviousOperations;//список предыдущих операций
         private bool enable;//поставлена ли оперция в расписание
         private Equipment equipment;//обордование или группа оборудований, на котором может выполняться операция
         Decision decision = null;//решение,создается,когда операция ставится в расписание
 
-        public Operation(int duration_, List<AOperation> Prev,Equipment equipment_)
+        public Operation(int id_,string name_,int duration_, List<AOperation> Prev,Equipment equipment_)
         {
+            id = id_;
+            name = name_;
             duration = new  TimeSpan(duration_);
             PreviousOperations = new List<AOperation>();
             foreach (Operation prev in Prev)
@@ -37,6 +41,22 @@ namespace SchedulerTask
             }
             enable = false;
             equipment = equipment_;
+        }
+
+        /// <summary>
+        /// получить id операции
+        /// </summary>   
+        public int GetID()
+        {
+            return id;
+        }
+
+        /// <summary>
+        /// получить имя операции
+        /// </summary>   
+        public string GetName()
+        {
+            return name;
         }
 
         /// <summary>
