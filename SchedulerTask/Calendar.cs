@@ -72,7 +72,7 @@ namespace SchedulerTask
         /// вернуть время, в которое закончится выполнение операции;
         /// T - время начала операции o
         /// </summary>   
-        public DateTime GetTimeofRelease(DateTime T, AOperation o)
+        public DateTime GetTimeofRelease(DateTime T, IOperation o)
         {
             DateTime operationtime;
             TimeSpan t = o.GetDuration();
@@ -111,7 +111,7 @@ namespace SchedulerTask
         /// вернуть минимальное время ближайшего возможного времени начала выполнения операции
         /// !!!!использовать для группового оборудования!!!!!!
         /// </summary> 
-        public DateTime GetMinNearestStart(DateTime T, List<Equipment> elist)
+        public DateTime GetMinNearestStart(DateTime T, List<AEquipment> elist)
         {
             DateTime min = new DateTime();
 

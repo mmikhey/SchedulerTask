@@ -10,27 +10,27 @@ namespace SchedulerTask
     public class EquipmentManager : ICalendar
     {
         List<Interval> calendarintervals;
-        List<Equipment> eq;
+        // List<Equipment> eq;
 
-        public EquipmentManager(List<Interval> calendarintervals, List<Equipment> eq)
+        public EquipmentManager(List<Interval> calendarintervals)
         {
             this.calendarintervals = calendarintervals;
-            this.eq = eq;
+
 
             for (int i = 0; i < calendarintervals.Count; i++)
                 if (calendarintervals[i].GetEndTime() >= calendarintervals[i + 1].GetStartTime())
                 { calendarintervals[i].SetEndTime(calendarintervals[i + 1].GetEndTime()); calendarintervals.RemoveAt(i + 1); }
 
-            for (int i = 0; i < eq.Count; i++)
-                for (int j = 0; j < eq.Count; j++)
-                {
-                    if (eq[j].GetID() > eq[j + 1].GetID())
-                    {
-                        Equipment etpm = eq[j];
-                        eq[j] = eq[j + 1];
-                        eq[j + 1] = etpm;
-                    }
-                }
+            /* for (int i = 0; i < eq.Count; i++)
+                 for (int j = 0; j < eq.Count; j++)
+                 {
+                     if (eq[j].GetID() > eq[j + 1].GetID())
+                     {
+                         Equipment etpm = eq[j];
+                         eq[j] = eq[j + 1];
+                         eq[j + 1] = etpm;
+                     }
+                 }*/
         }
 
         //вернуть индекс инервала в календаре, в который попадает заданный такт времени T
@@ -65,39 +65,35 @@ namespace SchedulerTask
              return indexeslist;
          }*/
 
-        public List<Equipment> GetEquipments()
-        {
-            return eq;
-        }
+        //public List<Equipment> GetEquipments()
+        //{
+        //    return eq;
+        //}
 
-        /// <summary>
-        /// вернем true, если оборудование групповое
-        /// false - атамарно
-        /// </summary>
-        public bool IsGroup(int id)
-        {
-            int num = eq[id].GetNum();
 
-            for (int i = 0; i < eq.Count; i++)
-            {
-                if (num == i) continue;
-                if (eq[i].GetNum() == num) return true;
-            }
-
-            return false;
-        }
 
         /// <summary>
         /// Найти подходящее оборудование из списка по ID;
         /// !!! Перед работой с методом проверить выходной флаг; флаг = true, если оборудование нашлось по ID
         /// </summary>
-        public Equipment GetEquipByID(int id, out bool flag)
+        public AEquipment GetEquipByID(int id, out bool flag)
         {
-            foreach (Equipment e in eq)
+            foreach (AEquipment e in eq)
                 if (e.GetID() == id) { flag = true; return e; }
 
             flag = false;
-            return new Equipment(new Calendar(new List<Interval>()), -1, -1, "lala", "lala");
+            return new SingleEquipment(new Calendar(new List<Interval>()), -1, "lala");
+        }
+
+
+        /// <summary>
+        /// вернем true, если оборудование групповое
+        /// false - атамарно
+        /// </summary>
+        public bool IsGroup(AEquipment e)
+        {
+            if (e is GroupEquipment) return true;
+            else return false;
         }
 
         /// <summary>
@@ -105,16 +101,18 @@ namespace SchedulerTask
         /// Доп. выходные параметры:
         /// operationtime - время окончания операции (для первого случая) или  ближайшее время начала операции (для второго случая); 
         /// </summary>
-        public bool IsFree(DateTime T, AOperation o, out DateTime operationtime, out int equipID)
+        public bool IsFree(DateTime T, IOperation o, out DateTime operationtime, out int equipID)
         {
-
             TimeSpan lasting;
             DateTime startime;
             DateTime endtime;
             TimeSpan t = o.GetDuration();
             int intervalindex;
 
-            foreach (Equipment e in eq)
+
+            //if (IsGroup(o.GetEquipment()))
+
+            foreach (AEquipment e in o.GetEquipment())
             {
                 if ((e.IsFree(T)) && (e.GetCalendar().IsInterval(T, out intervalindex)))
                 {
@@ -125,15 +123,19 @@ namespace SchedulerTask
 
                     if (t <= lasting) operationtime = startime + t;
                     else operationtime = e.GetCalendar().GetTimeofRelease(T, o);
-
                     return true;
                 }
             }
 
-            equipID = -1;
-            operationtime = eq[0].GetCalendar().GetNearestStart(T); //фиктивно
-            return false;
+            //else
 
+            equipID = -1;
+            DateTime mintime = new DateTime();
+            foreach (AEquipment equip in o.GetEquipment())
+                if (equip.GetCalendar().GetNearestStart(T) <= mintime) mintime = equip.GetCalendar().GetNearestStart(T);
+            operationtime = mintime;
+
+            return false;
         }
     }
 }

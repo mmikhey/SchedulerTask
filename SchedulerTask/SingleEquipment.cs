@@ -9,30 +9,27 @@
     /// <summary>
     /// оборудование
     /// </summary>
-    public class Equipment
+    public class SingleEquipment : AEquipment
     {
         Calendar ca; //календарь для текущего оборудования
         int eqid; //id оборудования
-        int num; //номер группы (для группового оборудования)
         bool occflag; //флаг занятости оборудования; true - свободно; false - занято;
-        string groupname, individualname;
+        string individualname;
         //Dictionary<int, bool> eqtacts; //словарь часовых тактов; int - значение часа; bool - значение занятости оборудования в течение часа 
         //(true - свободно, false - занято); по умолчанию весь интервал, состоящий из тактов времени считается свободным
 
-        public Equipment(Calendar ca, int id, int num, string groupname, string individualname)
+        public SingleEquipment(Calendar ca, int id, string individualname)
         {
             this.ca = ca;
             eqid = id;
-            this.num = num;
-            this.groupname = groupname;
             this.individualname = individualname;
         }
 
-        
+
         /// <summary>
         /// получить календарь оборудования 
         /// </summary>   
-        public Calendar GetCalendar()
+        public override Calendar GetCalendar()
         {
             return ca;
         }
@@ -40,25 +37,18 @@
         /// <summary>
         /// получить id оборудования (если оборудование групповое, то возвращается id группы оборудования)
         /// </summary>      
-        public int GetID()
+        public override int GetID()
         {
             return eqid;
         }
 
-        /// <summary>
-        /// получить номер типа оборудования 
-        /// </summary>  
-        public int GetNum()
-        {
-            return num;
-        }
 
-        public bool GetOcFlag()
+        public override bool GetOcFlag()
         {
             return occflag;
         }
 
-        public void SetOcFlag(bool val)
+        public override void SetOcFlag(bool val)
         {
             occflag = val;
         }
@@ -69,7 +59,7 @@
         /// да - вернем true
         /// нет - вернем false
         /// </summary> 
-        public bool CanSetWork(DateTime starttime, AOperation o)
+        public override bool CanSetWork(DateTime starttime, IOperation o)
         {
             int index;
 
@@ -85,7 +75,7 @@
         /// проверка доступности оборудования в такт времени T
         /// true - оборудование доступно; false - занято
         /// </summary>        
-        public bool IsFree(DateTime T)
+        public override bool IsFree(DateTime T)
         {
             if (GetCalendar().IsFree(T)) return true;
             else return false;
@@ -94,7 +84,7 @@
         /// <summary>
         /// Занять оборудование c t1 до t2
         /// </summary>  
-        public void OccupyEquip(DateTime t1, DateTime t2)
+        public override void OccupyEquip(DateTime t1, DateTime t2)
         {
             GetCalendar().OccupyHours(t1, t2);
         }
