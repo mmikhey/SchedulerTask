@@ -26,21 +26,23 @@ namespace SchedulerTask
         private TimeSpan duration;//длительность операции
         private List<AOperation> PreviousOperations;//список предыдущих операций
         private bool enable;//поставлена ли оперция в расписание
-        private Equipment equipment;//обордование или группа оборудований, на котором может выполняться операция
-        Decision decision = null;//решение,создается,когда операция ставится в расписание
+        private IEquipment equipment;//обордование или группа оборудований, на котором может выполняться операция
+        private Decision decision = null;//решение,создается,когда операция ставится в расписание
+        private Party parent_party;//ссылка на партию,в которой состоит данная операция
 
-        public Operation(int id_,string name_,int duration_, List<AOperation> Prev,Equipment equipment_)
+        public Operation(int id_,string name_,int duration_, List<AOperation> Prev,IEquipment equipment_,Party party)
         {
             id = id_;
             name = name_;
             duration = new  TimeSpan(duration_);
             PreviousOperations = new List<AOperation>();
-            foreach (Operation prev in Prev)
+            foreach (AOperation prev in Prev)
             {
                 PreviousOperations.Add(prev);
             }
             enable = false;
             equipment = equipment_;
+            parent_party = party;
         }
 
         /// <summary>
@@ -120,9 +122,17 @@ namespace SchedulerTask
         /// <summary>
         /// получить оборудование или группу оборудований, на котором может выполняться операция
         /// </summary>  
-        public Equipment GetEquipment()
+        public IEquipment GetEquipment()
         {
             return equipment;
+        }
+
+        /// <summary>
+        /// получить ссылку на партию,в которой состоит данная операция
+        /// </summary>   
+        public Party GetParty()
+        {
+            return parent_party;
         }
     } 
 }
