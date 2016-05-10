@@ -8,21 +8,31 @@ namespace SchedulerTask
     /// </summary>
     class FrontBuilding
     {
-        private Party party;
+        private List<Party> party;
         private List<AOperation> operations;
         private EquipmentManager equipmentManager;
 
-        public FrontBuilding(Party party, EquipmentManager equipmentManager)
+        public FrontBuilding(List<Party> party, EquipmentManager equipmentManager)
         {
             this.party = party;
-            operations = party.getPartyOperations();
+
+            // Получение операций из партий
+            foreach (Party i in party)
+            {
+                TreeIterator partyIterator = i.getIterator();
+            }
+            
             this.equipmentManager = equipmentManager;
         }
 
         public void Build()
         {
             List<Event> events = new List<Event>();
-            events.Add(new Event(party.getStartTimeParty()));
+            foreach (Party i in party)
+            {
+                events.Add(new Event(i.getStartTimeParty()));
+            }
+            events.Sort();
 
             while (events.Count != 0)
             {
@@ -31,7 +41,7 @@ namespace SchedulerTask
                 // Формирование фронта
                 foreach (AOperation operation in operations)
                 {
-                    if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time))
+                    if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time) /* && (operation.GetParty().GetStartTimeParty() >= events[0].Time)*/)
                     {
                         DateTime operationTime;
                         int equipmentID;
