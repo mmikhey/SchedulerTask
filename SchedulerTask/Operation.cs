@@ -6,37 +6,38 @@ using System.Threading.Tasks;
 
 namespace SchedulerTask
 {
-    public interface AOperation
+    public interface IOperation
     {
         TimeSpan GetDuration();
         void SetOperationInPlan(DateTime real_start_time, DateTime real_end_time, Equipment real_equipment_id);
         bool IsEnd(DateTime time_);
         bool IsEnabled();
         bool PreviousOperationIsEnd(DateTime time_);
-        Equipment GetEquipment();
+        IEquipment GetEquipment();
+        Party GetParty();
     }
 
     /// <summary>
     /// операция
     /// </summary>   
-    class Operation : AOperation
+    class Operation : IOperation
     {
         private int id;//id операции
         private string name;//name операции
         private TimeSpan duration;//длительность операции
-        private List<AOperation> PreviousOperations;//список предыдущих операций
+        private List<IOperation> PreviousOperations;//список предыдущих операций
         private bool enable;//поставлена ли оперция в расписание
         private IEquipment equipment;//обордование или группа оборудований, на котором может выполняться операция
         private Decision decision = null;//решение,создается,когда операция ставится в расписание
         private Party parent_party;//ссылка на партию,в которой состоит данная операция
 
-        public Operation(int id_,string name_,int duration_, List<AOperation> Prev,IEquipment equipment_,Party party)
+        public Operation(int id_,string name_,int duration_, List<IOperation> Prev,IEquipment equipment_,Party party)
         {
             id = id_;
             name = name_;
             duration = new  TimeSpan(duration_);
-            PreviousOperations = new List<AOperation>();
-            foreach (AOperation prev in Prev)
+            PreviousOperations = new List<IOperation>();
+            foreach (IOperation prev in Prev)
             {
                 PreviousOperations.Add(prev);
             }
