@@ -48,24 +48,22 @@ namespace SchedulerTask
         /// <summary>
         /// вернуть индекс интервала в календаре, в который попадает заданное время T
         /// если не попадает ни в один из интервалов - найти индекс ближайшего возможного
+        /// flag  = true, если попали в интервал false - иначе
         /// </summary>       
-        public int FindInterval(DateTime T)
+        public int FindInterval(DateTime T, out bool flag)
         {
-            int index = -1;
             for (int j = 0; j < calendar.Count; j++)
             {
                 DateTime starttime = calendar[j].GetStartTime();
                 DateTime endtime = calendar[j].GetEndTime();
-                if ((DateTime.Compare(T, starttime) >= 0) && (DateTime.Compare(T, endtime) <= 0)) { index = j; break; }
+                if ((T >= starttime) && (T <= endtime)) { flag = true; return j; }
             }
 
-            if (index == -1)
-            {
-                for (int i = 0; i < calendar.Count; i++)
-                    if ((T > calendar[i].GetEndTime()) && (T < calendar[i + 1].GetStartTime())) { index = i + 1; break; }
-            }
+            for (int i = 0; i < calendar.Count; i++)
+                if ((T > calendar[i].GetEndTime()) && (T < calendar[i + 1].GetStartTime())) { flag = false; return i + 1; }
 
-            return index;
+            flag = false;
+            return -1;
         }
 
         /// <summary>
@@ -74,9 +72,10 @@ namespace SchedulerTask
         /// </summary>   
         public DateTime GetTimeofRelease(DateTime T, IOperation o)
         {
+            bool flag;
             DateTime operationtime;
             TimeSpan t = o.GetDuration();
-            int index = FindInterval(T);
+            int index = FindInterval(T, out flag);
             DateTime endtime = calendar[index].GetEndTime();
             DateTime startime = calendar[index].GetStartTime();
             TimeSpan lasting = endtime.Subtract(startime);
@@ -102,29 +101,18 @@ namespace SchedulerTask
         /// </summary> 
         public DateTime GetNearestStart(DateTime T)
         {
-            int index = FindInterval(T);
-            DateTime operationtime = calendar[index].GetStartTime();
-            return operationtime;
+            bool flag;
+            //DateTime operationtime;
+            int index = FindInterval(T, out flag);
+            if (flag == false)
+                return calendar[index].GetStartTime();
+            else return T;
         }
-
-        /// <summary>
-        /// вернуть минимальное время ближайшего возможного времени начала выполнения операции
-        /// !!!!использовать для группового оборудования!!!!!!
-        /// </summary> 
-        public DateTime GetMinNearestStart(DateTime T, List<AEquipment> elist)
-        {
-            DateTime min = new DateTime();
-
-            foreach (Equipment e in elist)
-                if (e.GetCalendar().GetNearestStart(T) <= min) min = e.GetCalendar().GetNearestStart(T);
-
-            return min;
-        }
-
 
         public bool IsFree(DateTime T)
         {
-            int index = FindInterval(T);
+            bool flag;
+            int index = FindInterval(T, out flag);
             if (calendar[index].IsFree(T, T.AddHours(1))) return true;
             return false;
         }
@@ -134,7 +122,8 @@ namespace SchedulerTask
         /// </summary>
         public void OccupyHours(DateTime t1, DateTime t2)
         {
-            int index = FindInterval(t1);
+            bool flag;
+            int index = FindInterval(t1, out flag);
             calendar[index].OccupyHours(t1, t2);
         }
 
