@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace SchedulerTask
 {   
-    class Party
-    {
-        
+    public class Party
+    {        
         //список операций, необходимых для выполнения партии(заказа)
         private List<AOperation> operationsForParty;
         //ранне время начала
@@ -17,23 +16,33 @@ namespace SchedulerTask
         private DateTime endTimeParty;
         //приоритет
         private int priority;
+        //name партии
+        private String name;
+        //num продукта
+        private int num_products;
         //родитель(в случае с подпартиями - деревья)
         private Party parent;
         //подпартии
         private List<Party> subParty;
         public TreeIterator iterator;
 
-        public Party(DateTime startTime, DateTime endTime, int priority)
+        public Party(DateTime startTime, DateTime endTime, int priority, String name, int num_products)
         {
             this.startTimeParty = startTime;
             this.endTimeParty = endTime;
             this.priority = priority;
+            this.name = name;
+            this.num_products = num_products;
         }
-
+        //конструктор для подпартий
+        public Party(String name, int num_products)
+        {
+            this.name = name;
+            this.num_products = num_products;
+        }
         public Party()
         {
         }
-
         //добавлениее операций партии
         public void addOperationToForParty(AOperation operation)
         {
@@ -44,7 +53,6 @@ namespace SchedulerTask
             operationsForParty.Add(operation);
 
         }
-
         //добавление подпартий
         public void addSupParty(Party subPart)
         {
@@ -64,7 +72,6 @@ namespace SchedulerTask
             }
 
         }
-
         public Party getParent()
         {
             return parent;
@@ -73,7 +80,6 @@ namespace SchedulerTask
         {
             this.parent = parent;
         }
-
         public Party getRoot()
         {
             if (this.parent == null)
@@ -98,7 +104,6 @@ namespace SchedulerTask
                 return tmp;
             }
         }
-
         public TreeIterator getIterator()
         {
             if (iterator == null)
@@ -108,32 +113,34 @@ namespace SchedulerTask
             return iterator;
 
         }
-
         public bool isLeaf()
         {
             return subParty == null || subParty.Count == 0;
         }
-
         public void setStartTimeParty(DateTime start)
         {
             this.startTimeParty = start;
         }
-
         public void setEndTimeParty(DateTime end)
         {
             this.endTimeParty = end;
         }
-
         public void setPriority(int pr)
         {
             this.priority = pr;
         }
-
         public int getPriority()
         {
             return priority;
         }
-
+        public string getPartyName()
+        {
+            return name;
+        }
+        public void setPartyName(string name)
+        {
+            this.name = name;
+        }
         public DateTime getStartTimeParty()
         {
             return startTimeParty;
@@ -142,85 +149,16 @@ namespace SchedulerTask
         {
             return endTimeParty;
         }
-
         public List<AOperation> getPartyOperations()
         {
             return operationsForParty;
         }
-
         public List<Party> getSubParty()
         {
             return subParty;
         }
 
-    }
-
-    class TreeIterator
-    {
-        public Party Current { get; set; }
-
-        public TreeIterator(Party aRoot)
-        {
-            Current = aRoot;
-
-            if (Current == null)
-            {
-                return;
-            }
-            if (!Current.isLeaf())
-            {
-                List<Party> subP = Current.getSubParty();
-                foreach (Party subPart in subP)
-                {
-                    NodeQueue.Enqueue(subPart);
-                }
-
-            }
-        }
-
-        public bool next()
-        {
-            if (Current == null)
-            {
-                return false;
-            }
-
-            if (Current.isLeaf())
-            {
-                return false;
-            }
-
-            List<Party> subP = Current.getSubParty();
-
-            if (NodeQueue.Count > 0)
-            {
-                Current = NodeQueue.Dequeue();
-
-                foreach (Party subPart in subP)
-                {
-                    NodeQueue.Enqueue(subPart);
-                }
-            }
-            else
-            {
-                Current = null;
-            }
-
-            return hasNext();
-        }
-
-        public bool hasNext()
-        {
-            return Current != null;
-        }
-
-        private Queue<Party> NodeQueue
-        {
-            get { return mNodeQueue; }
-        }
-        private readonly Queue<Party> mNodeQueue = new Queue<Party>();
-
-    }    
+    }   
 }
 
 
