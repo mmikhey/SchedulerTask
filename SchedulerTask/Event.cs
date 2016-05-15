@@ -12,7 +12,6 @@ namespace SchedulerTask
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="operation">Операция, для которой создаётся событие</param>
         /// <param name="time">Время возникновения события</param>
         public Event(DateTime time)
         {
