@@ -109,7 +109,7 @@ namespace SchedulerTask
         public bool PreviousOperationIsEnd(DateTime time_)
         {
             bool flag = true;
-            foreach (AOperation prev in PreviousOperations)
+            foreach (IOperation prev in PreviousOperations)
             {
                 if (prev.IsEnd(time_) == false)
                 {
