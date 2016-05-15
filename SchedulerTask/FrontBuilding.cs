@@ -9,7 +9,7 @@ namespace SchedulerTask
     class FrontBuilding
     {
         private List<Party> party;
-        private List<AOperation> operations;
+        private List<IOperation> operations;
         private EquipmentManager equipmentManager;
 
         public FrontBuilding(List<Party> party, EquipmentManager equipmentManager)
@@ -20,6 +20,11 @@ namespace SchedulerTask
             foreach (Party i in party)
             {
                 TreeIterator partyIterator = i.getIterator();
+                while (partyIterator.hasNext())
+                {
+                    operations.AddRange(partyIterator.Current.getPartyOperations());
+                    partyIterator.next();
+                }
             }
             
             this.equipmentManager = equipmentManager;
@@ -36,12 +41,12 @@ namespace SchedulerTask
 
             while (events.Count != 0)
             {
-                List<AOperation> front = new List<AOperation>();
+                List<IOperation> front = new List<IOperation>();
 
                 // Формирование фронта
-                foreach (AOperation operation in operations)
+                foreach (IOperation operation in operations)
                 {
-                    if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time) /* && (operation.GetParty().GetStartTimeParty() >= events[0].Time)*/)
+                    if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time) && operation.GetParty().getStartTimeParty() >= events[0].Time)
                     {
                         DateTime operationTime;
                         int equipmentID;
@@ -71,7 +76,7 @@ namespace SchedulerTask
                     if (equipmentManager.IsFree(events[0].Time, operation, out operationTime, out equipmentID))
                     {
                         bool flafEq;
-                        Equipment equipment = equipmentManager.GetEquipByID(equipmentID, out flafEq);
+                        IEquipment equipment = equipmentManager.GetEquipByID(equipmentID, out flafEq);
                         operation.SetOperationInPlan(events[0].Time, operationTime, equipment);
                         equipment.OccupyEquip(events[0].Time, operationTime);
                     }
