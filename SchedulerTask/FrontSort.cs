@@ -8,9 +8,26 @@ namespace SchedulerTask
 {
     class FrontSort
     {
-        public static void sortFront(List<AOperation> front)
+        private static int comparision(IOperation a, IOperation b)
         {
-            //
+            int res = 0;
+            if (a.GetParty().getPriority() > b.GetParty().getPriority())
+                res = 1;
+            if (a.GetParty().getPriority() == b.GetParty().getPriority())
+                res = 0;
+            if (a.GetParty().getPriority() < b.GetParty().getPriority())
+                res = -1;
+            
+            return res;
         }
+
+        public static void sortFront(List<IOperation> front)
+        {
+            front.Sort(comparision);	
+		    
+		}
+
+        
+		
     }
 }
