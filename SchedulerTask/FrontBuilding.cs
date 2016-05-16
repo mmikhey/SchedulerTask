@@ -17,6 +17,7 @@ namespace SchedulerTask
             this.party = party;
 
             // Получение операций из партий
+            operations = new List<IOperation>();
             foreach (Party i in party)
             {
                 TreeIterator partyIterator = i.getIterator();
@@ -68,7 +69,7 @@ namespace SchedulerTask
                 FrontSort.sortFront(front);
 
                 // Назначение операций
-                foreach (Operation operation in front)
+                foreach (IOperation operation in front)
                 {
                     DateTime operationTime;
                     int equipmentID;
