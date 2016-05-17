@@ -20,7 +20,7 @@ namespace SchedulerTask
             operations = new List<IOperation>();
             foreach (Party i in party)
             {
-                TreeIterator partyIterator = i.getIterator();
+                TreeIterator partyIterator = i.getIterator(i);
                 while (partyIterator.hasNext())
                 {
                     operations.AddRange(partyIterator.Current.getPartyOperations());
@@ -50,8 +50,8 @@ namespace SchedulerTask
                     if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time) && operation.GetParty().getStartTimeParty() >= events[0].Time)
                     {
                         DateTime operationTime;
-                        int equipmentID;
-                        if (equipmentManager.IsFree(events[0].Time, operation, out operationTime, out equipmentID))
+                        IEquipment equipment;
+                        if (equipmentManager.IsFree(events[0].Time, operation, out operationTime, out equipment))
                         {
                             front.Add(operation);
                         }
@@ -72,13 +72,13 @@ namespace SchedulerTask
                 foreach (IOperation operation in front)
                 {
                     DateTime operationTime;
-                    int equipmentID;
+                    IEquipment equipment;
 
-                    if (equipmentManager.IsFree(events[0].Time, operation, out operationTime, out equipmentID))
+                    if (equipmentManager.IsFree(events[0].Time, operation, out operationTime, out equipment))
                     {
                         bool flafEq;
-                        IEquipment equipment = equipmentManager.GetEquipByID(equipmentID, out flafEq);
-                        operation.SetOperationInPlan(events[0].Time, operationTime, equipment);
+                        //IEquipment equipment = equipmentManager.GetEquipByID(equipmentID, out flafEq);
+                        operation.SetOperationInPlan(events[0].Time, operationTime, (SingleEquipment)equipment);
                         equipment.OccupyEquip(events[0].Time, operationTime);
                     }
 

@@ -119,7 +119,7 @@ namespace SchedulerTask
             return iterator;
 
         }
-        /*
+        
         public TreeIterator getIterator(Party aRoot)
         {
             if (iterator == null)
@@ -129,7 +129,7 @@ namespace SchedulerTask
             return iterator;
 
         }
-        */
+        
 
         public bool isLeaf()
         {

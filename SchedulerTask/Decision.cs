@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SchedulerTask
 {
-    class Decision
+    public class Decision
     {
         private DateTime start_time;//реальное время начала операции в расписании
         private DateTime end_time;// реальное время окончания операции в расписании
