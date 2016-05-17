@@ -21,7 +21,7 @@ namespace SchedulerTask
             this.name = name;
         }
 
-        public void AddEquipment(SingleEquipment e)
+        public void AddEquipment(IEquipment e)
         {
             equiplist.Add(e);
         }
