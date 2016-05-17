@@ -34,7 +34,10 @@ namespace SchedulerTask
             Calendar calendar = new Calendar(intlist);
             DateTime start = new DateTime();
             DateTime end = new DateTime();
-            foreach (XElement elm in sdata.Descendants("InformationModel").Descendants("CalendarInformation"))
+            XElement el = sdata.Root;
+            XNode node = el.FirstNode;
+            IEnumerable<XElement> xe = sdata.Descendants((XName)"InformationModel"); //.Descendants("CalendarInformation");
+            foreach (XElement elm in xe)
             {
                 if (elm.Attribute("date_begin") != null)
                 {
@@ -102,10 +105,10 @@ namespace SchedulerTask
             }
 
         }
-        public void ReadTechData(out List<Party> partlist, out Dictionary<int, Operation> opdic) //чтение данных по деталям и операциям
+        public void ReadTechData(out List<Party> partlist, out Dictionary<int, IOperation> opdic) //чтение данных по деталям и операциям
         {
             partlist = new List<Party>();
-            opdic = new Dictionary<int, Operation>();
+            opdic = new Dictionary<int, IOperation>();
             List<IOperation> tmpop;
             foreach (XElement product in tdata.Descendants("InformationModel").Descendants("WaresInformation").Descendants("Product"))
             {

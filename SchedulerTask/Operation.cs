@@ -15,12 +15,13 @@ namespace SchedulerTask
         bool PreviousOperationIsEnd(DateTime time_);
         IEquipment GetEquipment();
         Party GetParty();
+        Decision GetDecision();
     }
 
     /// <summary>
     /// операция
     /// </summary>   
-    class Operation : IOperation
+    public class Operation : IOperation
     {
         private int id;//id операции
         private string name;//name операции
@@ -134,6 +135,14 @@ namespace SchedulerTask
         public Party GetParty()
         {
             return parent_party;
+        }
+
+        /// <summary>
+        /// получить ссылку решение для данной операции
+        /// </summary>
+        public Decision GetDecision()
+        {
+            return decision;
         }
     } 
 }

@@ -10,14 +10,15 @@ namespace SchedulerTask
 {
     class writer
     {
-        public void WriteData(List<Decision> dlist)
+        public void WriteData(Dictionary<int, IOperation> oplist)
         {
-
+          
           System.IO.File.Copy("tech.xml", "tech+solution.xml");
           XDocument document = new XDocument();
           document = XDocument.Load("tech+solution.xml");
-          foreach (Decision d in dlist)
+          foreach (KeyValuePair<int, IOperation> o in oplist)
           {
+              Decision d = o.Value.GetDecision();
               string id = Convert.ToString(d.GetOperation().GetID());
               bool found = false;
               foreach (XElement product in document.Descendants("WaresInformation").Descendants("Product"))
