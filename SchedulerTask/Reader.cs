@@ -17,7 +17,7 @@ namespace SchedulerTask
         DateTime end;
         string datapattern = "MM.dd.yyyy";
         string dtpattern = "MM.dd.yyy H:mm:ss";
-     
+        Dictionary<int, IEquipment> eqdic;
         Dictionary<int,Operation> opdic;
         List<Party> partlist;
         public Reader()
@@ -25,10 +25,11 @@ namespace SchedulerTask
             sdata = XDocument.Load("system.xml");
             tdata = XDocument.Load("tech.xml");
         }
-        public void ReadSystemData(out List<Equipment> eqlist) //чтение данных по расписанию и станкам
+        public void ReadSystemData(out Dictionary<int, IEquipment>  eqdic) //чтение данных по расписанию и станкам
         {
             List<Interval> intlist = new List<Interval>();
-             eqlist = new List<Equipment>();
+        
+             eqdic = new Dictionary<int, IEquipment>();
 
             Calendar calendar = new Calendar(intlist);
             DateTime start = new DateTime();
@@ -84,11 +85,20 @@ namespace SchedulerTask
             }
             foreach (XElement elm in sdata.Descendants("InformationModel").Descendants("EquipmentGroup"))
             {
+                GroupEquipment tmp = new GroupEquipment(calendar, int.Parse(elm.Attribute("id").Value), elm.Attribute("name").Value);
                 foreach (XElement eg in elm.Descendants("EquipmentGroup"))
+                {
+                    GroupEquipment gtmp = new GroupEquipment(calendar, int.Parse(eg.Attribute("id").Value), eg.Attribute("name").Value);
                     foreach (XElement eq in eg.Descendants("Equipment"))
                     {
-                        eqlist.Add(new Equipment(calendar, int.Parse(eq.Attribute("id").Value), int.Parse(eg.Attribute("id").Value), eg.Attribute("name").Value, eq.Attribute("name").Value));
+                        SingleEquipment stmp = new SingleEquipment(calendar, int.Parse(eq.Attribute("id").Value), eq.Attribute("name").Value);
+                        eqdic.Add(stmp.GetID(), stmp);
+                        gtmp.AddEquipment(stmp);
                     }
+                    tmp.AddEquipment(gtmp);
+                    eqdic.Add(gtmp.GetID(), gtmp);
+                }
+                eqdic.Add(tmp.GetID(), tmp);
             }
 
         }
@@ -96,24 +106,24 @@ namespace SchedulerTask
         {
             partlist = new List<Party>();
             opdic = new Dictionary<int, Operation>();
-            List<AOperation> tmpop;
+            List<IOperation> tmpop;
             foreach (XElement product in tdata.Descendants("InformationModel").Descendants("WaresInformation").Descendants("Product"))
             {
                 foreach (XElement part in product.Descendants("Part"))
                 {
                     DateTime.TryParseExact(part.Attribute("date_begin").Value, datapattern, null, DateTimeStyles.None, out begin);
                     DateTime.TryParseExact(part.Attribute("date_end").Value, datapattern, null, DateTimeStyles.None, out end);
-                    Party parent = new Party(begin, end, int.Parse(part.Attribute("priority").Value));
-                    tmpop = ReadOperations(part);
-                    foreach(AOperation op in tmpop)
+                    Party parent = new Party(begin, end, int.Parse(part.Attribute("priority").Value), part.Attribute("name").Value, int.Parse(part.Attribute("num_products").Value));
+                    tmpop = ReadOperations(part , parent);
+                    foreach(IOperation op in tmpop)
                     {
                         parent.addOperationToForParty(op);
                     }
                     foreach (XElement subpart in product.Descendants("Subpart"))
                     {
-                        Party sp = new Party(begin, end, int.Parse(part.Attribute("priority").Value));
-                        tmpop = ReadOperations(subpart);
-                        foreach (AOperation op in tmpop)
+                        Party sp = new Party(subpart.Attribute("name").Value, int.Parse(subpart.Attribute("num_products").Value));
+                        tmpop = ReadOperations(subpart, parent);
+                        foreach (IOperation op in tmpop)
                         {
                             sp.addOperationToForParty(op);
                         }
@@ -126,12 +136,12 @@ namespace SchedulerTask
             }
         }
 
-        private List<AOperation> ReadOperations(XElement part)
+        private List<IOperation> ReadOperations(XElement part, Party parent)
         {
-            List<AOperation> tmpop = new List<AOperation>();
+            List<IOperation> tmpop = new List<IOperation>();
             foreach (XElement oper in part.Descendants("Operation"))
             {
-                List<AOperation> pop = new List<AOperation>();
+                List<IOperation> pop = new List<IOperation>();
                 if (oper.Descendants("Previous") != null)
                 {
                     foreach (XElement prop in oper.Descendants("Previous"))
@@ -139,8 +149,8 @@ namespace SchedulerTask
                         pop.Add(opdic[int.Parse(prop.Attribute("id").Value)]);
                     }
                 }
-                tmpop.Add(new Operation(int.Parse(oper.Attribute("id").Value), oper.Attribute("name").Value, int.Parse(oper.Attribute("duration").Value), pop, int.Parse(oper.Attribute("equipmentgroup").Value)));
-                opdic.Add(int.Parse(oper.Attribute("id").Value), new Operation(int.Parse(oper.Attribute("id").Value), oper.Attribute("name").Value, int.Parse(oper.Attribute("duration").Value), pop, int.Parse(oper.Attribute("equipmentgroup").Value)));
+                tmpop.Add(new Operation(int.Parse(oper.Attribute("id").Value), oper.Attribute("name").Value, int.Parse(oper.Attribute("duration").Value), pop, eqdic[int.Parse(oper.Attribute("equipmentgroup").Value)], parent));
+                opdic.Add(int.Parse(oper.Attribute("id").Value), new Operation(int.Parse(oper.Attribute("id").Value), oper.Attribute("name").Value, int.Parse(oper.Attribute("duration").Value), pop, eqdic[int.Parse(oper.Attribute("equipmentgroup").Value)], parent));
             }
             return tmpop;
 
