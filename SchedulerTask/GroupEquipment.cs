@@ -26,18 +26,14 @@ namespace SchedulerTask
             equiplist.Add(e);
         }
 
-        public Calendar GetCalendar()
-        {
-            return equiplist[index].GetCalendar();
-        }
 
-        /// <summary>
-        /// Занять оборудование c t1 до t2
-        /// </summary>  
-        public void OccupyEquip(DateTime t1, DateTime t2)
-        {
-            equiplist[index].GetCalendar().OccupyHours(t1, t2);
-        }
+        ///// <summary>
+        ///// Занять оборудование c t1 до t2
+        ///// </summary>  
+        //public void OccupyEquip(DateTime t1, DateTime t2)
+        //{
+        //    equiplist[index].GetCalendar().OccupyHours(t1, t2);
+        //}
 
         /// <summary>
         /// получить id оборудования (если оборудование групповое, то возвращается id группы оборудования)
@@ -54,7 +50,7 @@ namespace SchedulerTask
         /// </summary>        
         public bool IsOccupied(DateTime T)
         {
-            foreach (IEquipment e in this)
+            foreach (SingleEquipment e in this)
             {
                 if (e.GetCalendar().IsFree(T)) return true;
             }

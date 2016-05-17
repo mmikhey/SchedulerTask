@@ -9,9 +9,8 @@ namespace SchedulerTask
 {
     public interface IEquipment : IEnumerable, IEnumerator
     {
-        Calendar GetCalendar();
         int GetID();
         bool IsOccupied(DateTime T);
-        void OccupyEquip(DateTime t1, DateTime t2);
+        //void OccupyEquip(DateTime t1, DateTime t2);
     }
 }
