@@ -50,7 +50,7 @@ namespace SchedulerTask
                     if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time) && operation.GetParty().getStartTimeParty() >= events[0].Time)
                     {
                         DateTime operationTime;
-                        IEquipment equipment;
+                        SingleEquipment equipment;
                         if (equipmentManager.IsFree(events[0].Time, operation, out operationTime, out equipment))
                         {
                             front.Add(operation);
@@ -72,13 +72,12 @@ namespace SchedulerTask
                 foreach (IOperation operation in front)
                 {
                     DateTime operationTime;
-                    IEquipment equipment;
+                    SingleEquipment equipment;
 
                     if (equipmentManager.IsFree(events[0].Time, operation, out operationTime, out equipment))
                     {
                         bool flafEq;
-                        //IEquipment equipment = equipmentManager.GetEquipByID(equipmentID, out flafEq);
-                        operation.SetOperationInPlan(events[0].Time, operationTime, (SingleEquipment)equipment);
+                        operation.SetOperationInPlan(events[0].Time, operationTime, equipment);
                         equipment.OccupyEquip(events[0].Time, operationTime);
                     }
 
