@@ -14,7 +14,7 @@ namespace SchedulerTask
         /// Доп. выходные параметры:
         /// operationtime - время окончания операции (для первого случая) или  ближайшее время начала операции (для второго случая); 
         /// </summary>
-        public bool IsFree(DateTime T, IOperation o, out DateTime operationtime, out IEquipment equip)
+        public bool IsFree(DateTime T, IOperation o, out DateTime operationtime, out SingleEquipment equip)
         {
             TimeSpan lasting;
             DateTime startime;
