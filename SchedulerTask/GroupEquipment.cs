@@ -15,10 +15,11 @@ namespace SchedulerTask
         int eqid; //id оборудования
         string name;
 
-        public GroupEquipment(Calendar ca, int id, string name)
+        public GroupEquipment(Calendar ca, int id, string name, List<IEquipment> equiplist)
         {
             eqid = id;
             this.name = name;
+            this.equiplist = equiplist;
         }
 
         public void AddEquipment(IEquipment e)
