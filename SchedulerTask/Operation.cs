@@ -32,11 +32,11 @@ namespace SchedulerTask
         private Decision decision = null;//решение,создается,когда операция ставится в расписание
         private Party parent_party;//ссылка на партию,в которой состоит данная операция
 
-        public Operation(int id_,string name_,int duration_, List<IOperation> Prev,IEquipment equipment_,Party party)
+        public Operation(int id_,string name_,TimeSpan duration_, List<IOperation> Prev,IEquipment equipment_,Party party)
         {
             id = id_;
             name = name_;
-            duration = new  TimeSpan(duration_, 0, 0);
+            duration = duration_;
             PreviousOperations = new List<IOperation>();
             foreach (IOperation prev in Prev)
             {
