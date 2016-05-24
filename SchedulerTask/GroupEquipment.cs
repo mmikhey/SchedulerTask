@@ -48,13 +48,13 @@ namespace SchedulerTask
 
         /// <summary>
         /// проверка доступности оборудования в такт времени T
-        /// true - оборудование доступно; false - занято
+        /// true - оборудование занято; false - доступно
         /// </summary>        
         public bool IsOccupied(DateTime T)
         {
             foreach (SingleEquipment e in this)
             {
-                if (e.GetCalendar().IsFree(T)) return true;
+                if (e.IsOccupied(T)) return true;
             }
 
             return false;
