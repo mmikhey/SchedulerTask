@@ -21,7 +21,7 @@ namespace SchedulerTask
 
             foreach (SingleEquipment e in o.GetEquipment())
             {
-                if ((!e.IsOccupied(T)) && (e.GetCalendar().IsInterval(T, out intervalindex)))
+                if ((e.IsNotOccupied(T)) && (e.GetCalendar().IsInterval(T, out intervalindex)))
                 {
                     equip = e;
                     operationtime = e.GetCalendar().GetTimeofRelease(T, t, intervalindex);

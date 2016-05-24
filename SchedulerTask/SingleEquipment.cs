@@ -49,9 +49,9 @@
 
         /// <summary>
         /// проверка доступности оборудования в такт времени T
-        /// true - оборудование занято; false - доступно
+        /// true - оборудование доступно; false - занято
         /// </summary>        
-        public bool IsOccupied(DateTime T)
+        public bool IsNotOccupied(DateTime T)
         {
             return OccupyT2 < T;
         }
