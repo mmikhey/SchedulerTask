@@ -10,7 +10,7 @@ namespace SchedulerTask
     public interface IEquipment : IEnumerable, IEnumerator
     {
         int GetID();
-        bool IsOccupied(DateTime T);
+        bool IsNotOccupied(DateTime T);
         //void OccupyEquip(DateTime t1, DateTime t2);
     }
 }

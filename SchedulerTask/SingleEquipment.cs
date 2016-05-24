@@ -19,6 +19,8 @@
         string individualname;
         //Dictionary<int, bool> eqtacts; //словарь часовых тактов; int - значение часа; bool - значение занятости оборудования в течение часа 
         //(true - свободно, false - занято); по умолчанию весь интервал, состоящий из тактов времени считается свободным
+        DateTime OccupyT1 = DateTime.MinValue;
+        DateTime OccupyT2 = DateTime.MinValue;
 
         public SingleEquipment(Calendar ca, int id, string individualname)
         {
@@ -49,11 +51,9 @@
         /// проверка доступности оборудования в такт времени T
         /// true - оборудование доступно; false - занято
         /// </summary>        
-        public bool IsOccupied(DateTime T)
+        public bool IsNotOccupied(DateTime T)
         {
-            //return GetCalendar().IsFree(T);
             return OccupyT2 < T;
-
         }
 
         /// <summary>
@@ -67,8 +67,7 @@
 
         }
 
-        DateTime OccupyT1 = DateTime.MinValue;
-        DateTime OccupyT2 = DateTime.MinValue;
+
         
 
         public IEnumerator GetEnumerator()

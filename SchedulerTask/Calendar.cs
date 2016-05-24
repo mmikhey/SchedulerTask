@@ -15,17 +15,11 @@ namespace SchedulerTask
     public class Calendar
     {
         List<Interval> calendar;
-        //Equipment eq;
 
-        public Calendar(List<Interval> calendar)
+        public Calendar(List<Interval> intervallist)
         {
-            this.calendar = calendar;
-            this.calendar.Sort();
-
-
-            //for (int i = 0; i < calendar.Count - 1; i++)
-            //    if (calendar[i].GetEndTime() >= calendar[i + 1].GetStartTime())
-            //    { calendar[i].SetEndTime(calendar[i + 1].GetEndTime()); calendar.RemoveAt(i + 1); }
+            calendar = new List<Interval>(intervallist);
+            calendar.Sort();
         }
 
         /// <summary>
@@ -70,31 +64,26 @@ namespace SchedulerTask
 
         /// <summary>
         /// вернуть время, в которое закончится выполнение операции;
-        /// T - время начала операции o
+        /// T - время начала операции o;
+        /// t - длительность операции;
+        /// intervalindex - индекс интервала в календаре
         /// </summary>   
-        public DateTime GetTimeofRelease(DateTime T, IOperation o)
+        public DateTime GetTimeofRelease(DateTime T, TimeSpan t, int intervalindex)
         {
-            bool flag;
-            DateTime operationtime;
-            TimeSpan t = o.GetDuration();
-            int index = FindInterval(T, out flag);
-            DateTime endtime = calendar[index].GetEndTime();
-            DateTime startime = calendar[index].GetStartTime();
-            TimeSpan lasting = endtime.Subtract(startime);
+            TimeSpan intervallasting = calendar[intervalindex].GetEndTime() - T;
             TimeSpan tmptime = t;
 
-            while (tmptime.CompareTo(lasting) == 1)
-            {
-                tmptime = tmptime.Subtract(lasting);
-                if (index == calendar.Count - 1) index = 0;
-                else index += index;
-                endtime = calendar[index].GetEndTime();
-                startime = calendar[index].GetStartTime();
-                lasting = endtime.Subtract(startime);
-            }
-            operationtime = startime + tmptime;
+            if (t <= intervallasting) return T + t;
 
-            return operationtime;
+            while (tmptime > intervallasting)
+            {
+                tmptime = tmptime - intervallasting;
+                //if (intervalindex == calendar.Count - 1) intervalindex = 0;
+                intervalindex += 1;
+                intervallasting = calendar[intervalindex].GetEndTime() - calendar[intervalindex].GetStartTime();
+            }
+
+            return calendar[intervalindex].GetStartTime() + tmptime;
         }
 
         /// <summary>
@@ -104,31 +93,12 @@ namespace SchedulerTask
         public DateTime GetNearestStart(DateTime T)
         {
             bool flag;
-            //DateTime operationtime;
             int index = FindInterval(T, out flag);
             if (flag == false)
                 return calendar[index].GetStartTime();
             else return T;
         }
-
-        public bool IsFree(DateTime T)
-        {
-            bool flag;
-            int index = FindInterval(T, out flag);
-            if (calendar[index].IsFree(T, T.AddHours(1))) return true;
-            return false;
-        }
-
-        /// <summary>
-        /// Занять интервал от времени t1 до t2.
-        /// </summary>
-        public void OccupyHours(DateTime t1, DateTime t2)
-        {
-            bool flag;
-            int index = FindInterval(t1, out flag);
-            calendar[index].OccupyHours(t1, t2);
-        }
-
+        
         public Interval GetInterval(int index)
         {
             return calendar[index];
