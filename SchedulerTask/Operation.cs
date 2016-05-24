@@ -36,7 +36,7 @@ namespace SchedulerTask
         {
             id = id_;
             name = name_;
-            duration = new  TimeSpan(duration_);
+            duration = new  TimeSpan(duration_, 0, 0);
             PreviousOperations = new List<IOperation>();
             foreach (IOperation prev in Prev)
             {

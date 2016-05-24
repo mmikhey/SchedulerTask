@@ -5,7 +5,7 @@ namespace SchedulerTask
     /// <summary>
     /// Событие
     /// </summary>
-    class Event
+    class Event: IComparable
     {
         private DateTime time;
         
@@ -22,6 +22,15 @@ namespace SchedulerTask
         {
             get { return time; }
             set { }
+        }
+
+        public int CompareTo(object obj)
+        {
+            Event e2 = obj as Event;
+            if (e2 == null)
+                return 0;
+
+            return DateTime.Compare(Time, e2.Time);
         }
     }
 }

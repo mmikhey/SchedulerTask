@@ -21,10 +21,9 @@ namespace SchedulerTask
             foreach (Party i in party)
             {
                 TreeIterator partyIterator = i.getIterator(i);
-                while (partyIterator.hasNext())
+                while (partyIterator.next())
                 {
                     operations.AddRange(partyIterator.Current.getPartyOperations());
-                    partyIterator.next();
                 }
             }
             
@@ -47,7 +46,7 @@ namespace SchedulerTask
                 // Формирование фронта
                 foreach (IOperation operation in operations)
                 {
-                    if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time) && operation.GetParty().getStartTimeParty() >= events[0].Time)
+                    if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time) && operation.GetParty().getStartTimeParty() <= events[0].Time)
                     {
                         DateTime operationTime;
                         SingleEquipment equipment;

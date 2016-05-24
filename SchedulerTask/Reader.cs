@@ -31,8 +31,7 @@ namespace SchedulerTask
             List<Interval> intlist = new List<Interval>();
         
             eqdic = new Dictionary<int, IEquipment>();
-
-            Calendar calendar = new Calendar(intlist);
+            
             DateTime start = new DateTime();
             DateTime end = new DateTime();
             XElement root = sdata.Root;
@@ -88,7 +87,9 @@ namespace SchedulerTask
               
 
             }
-          
+
+            Calendar calendar = new Calendar(intlist);
+
             foreach (XElement elm in root.Descendants(df + "EquipmentInformation").Elements(df + "EquipmentGroup"))
             {
                 GroupEquipment tmp = new GroupEquipment(calendar, int.Parse(elm.Attribute("id").Value), elm.Attribute("name").Value);
@@ -106,6 +107,9 @@ namespace SchedulerTask
                 }
                 eqdic.Add(tmp.GetID(), tmp);
             }
+
+            
+
             return eqdic;
         }
         public void ReadTechData(out List<Party> partlist, out Dictionary<int, IOperation> opdic) //чтение данных по деталям и операциям
@@ -136,7 +140,7 @@ namespace SchedulerTask
                             sp.addOperationToForParty(op);
                         }
                         parent.addSupParty(sp);
-                        partlist.Add(sp);
+                        //partlist.Add(sp);
                     }
                     partlist.Add(parent);
                 }

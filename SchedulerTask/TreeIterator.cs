@@ -12,58 +12,72 @@ namespace SchedulerTask
 
         public TreeIterator(Party aRoot)
         {
-            Current = aRoot;
+            //Current = aRoot;
 
-            if (Current == null)
-            {
-                return;
-            }
-            if (!Current.isLeaf())
-            {
-                List<Party> subP = Current.getSubParty();
-                foreach (Party subPart in subP)
-                {
-                    NodeQueue.Enqueue(subPart);
-                }
+            //if (Current == null)
+            //{
+            //    return;
+            //}
+            //if (!Current.isLeaf())
+            //{
+            //    List<Party> subP = Current.getSubParty();
+            //    foreach (Party subPart in subP)
+            //    {
+            //        NodeQueue.Enqueue(subPart);
+            //    }
 
-            }
+            //}
+
+            NodeQueue.Enqueue(aRoot);
         }
 
         public bool next()
         {
-            if (Current == null)
-            {
+            if (NodeQueue == null || NodeQueue.Count == 0)
                 return false;
-            }
 
-            if (Current.isLeaf())
+            Current = NodeQueue.Dequeue();
+
+            foreach (Party subPart in Current.getSubParty())
             {
-                return false;
+                NodeQueue.Enqueue(subPart);
             }
 
-            List<Party> subP = Current.getSubParty();
+            return true;
+            
+            //if (Current == null)
+            //{
+            //    return false;
+            //}
 
-            if (NodeQueue.Count > 0)
-            {
-                Current = NodeQueue.Dequeue();
+            //if (Current.isLeaf())
+            //{
+            //    return false;
+            //}
 
-                foreach (Party subPart in subP)
-                {
-                    NodeQueue.Enqueue(subPart);
-                }
-            }
-            else
-            {
-                Current = null;
-            }
+            //List<Party> subP = Current.getSubParty();
 
-            return hasNext();
+            //if (NodeQueue.Count > 0)
+            //{
+            //    Current = NodeQueue.Dequeue();
+
+            //    foreach (Party subPart in subP)
+            //    {
+            //        NodeQueue.Enqueue(subPart);
+            //    }
+            //}
+            //else
+            //{
+            //    Current = null;
+            //}
+
+            //return hasNext();
         }
 
-        public bool hasNext()
-        {
-            return Current != null;
-        }
+        //public bool hasNext()
+        //{
+        //    return Current != null;
+        //}
 
         private Queue<Party> NodeQueue
         {

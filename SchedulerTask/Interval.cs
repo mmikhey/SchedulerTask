@@ -11,7 +11,7 @@ namespace SchedulerTask
     /// 
 
 
-    public class Interval
+    public class Interval:IComparable
     {
         DateTime starttime;
         DateTime endtime;
@@ -75,6 +75,14 @@ namespace SchedulerTask
                 tacts[t] = false;
             }
 
+        }
+
+        public int CompareTo(object obj)
+        {
+            Interval i2 = obj as Interval;
+            if (obj == null) return 0;
+
+            return DateTime.Compare(starttime, i2.starttime);
         }
     }
 }

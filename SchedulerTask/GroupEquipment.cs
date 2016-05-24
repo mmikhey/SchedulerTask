@@ -63,6 +63,7 @@ namespace SchedulerTask
 
         public IEnumerator GetEnumerator()
         {
+            Reset();
             return this;
         }
 
