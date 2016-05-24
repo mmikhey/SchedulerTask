@@ -51,7 +51,8 @@
         /// </summary>        
         public bool IsOccupied(DateTime T)
         {
-            return GetCalendar().IsFree(T);
+            //return GetCalendar().IsFree(T);
+            return OccupyT2 < T;
 
         }
 
@@ -60,8 +61,14 @@
         /// </summary>  
         public void OccupyEquip(DateTime t1, DateTime t2)
         {
-            GetCalendar().OccupyHours(t1, t2);
+            //GetCalendar().OccupyHours(t1, t2);
+            OccupyT1 = t1;
+            OccupyT2 = t2;
+
         }
+
+        DateTime OccupyT1 = DateTime.MinValue;
+        DateTime OccupyT2 = DateTime.MinValue;
         
 
         public IEnumerator GetEnumerator()

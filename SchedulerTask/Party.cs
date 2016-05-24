@@ -61,8 +61,8 @@ namespace SchedulerTask
         //добавление подпартий
         public void addSupParty(Party subPart)
         {
-            subParty.Add(subPart);
-            if (subPart.getRoot() != subPart && this != subPart && this.parent != subPart)
+            //subParty.Add(subPart);
+            //if (subPart.getRoot() != subPart && this != subPart && this.parent != subPart)
             {
                 if (subParty == null)
                 {

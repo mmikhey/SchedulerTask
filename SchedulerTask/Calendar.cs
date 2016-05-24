@@ -20,10 +20,12 @@ namespace SchedulerTask
         public Calendar(List<Interval> calendar)
         {
             this.calendar = calendar;
+            this.calendar.Sort();
 
-            for (int i = 0; i < calendar.Count; i++)
-                if (calendar[i].GetEndTime() >= calendar[i + 1].GetStartTime())
-                { calendar[i].SetEndTime(calendar[i + 1].GetEndTime()); calendar.RemoveAt(i + 1); }
+
+            //for (int i = 0; i < calendar.Count - 1; i++)
+            //    if (calendar[i].GetEndTime() >= calendar[i + 1].GetStartTime())
+            //    { calendar[i].SetEndTime(calendar[i + 1].GetEndTime()); calendar.RemoveAt(i + 1); }
         }
 
         /// <summary>
