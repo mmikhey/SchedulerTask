@@ -13,7 +13,7 @@ namespace SchedulerTask
             Reader reader = new Reader();
             
             Dictionary<int, IEquipment> eqdic;
-            reader.ReadSystemData(out eqdic);
+            eqdic = reader.ReadSystemData();
 
             List<Party> partlist;
             Dictionary<int, IOperation> opdic;

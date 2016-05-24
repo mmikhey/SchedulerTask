@@ -33,12 +33,14 @@ namespace SchedulerTask
             this.priority = priority;
             this.name = name;
             this.num_products = num_products;
+            subParty = new List<Party>();
         }
         //конструктор для подпартий
         public Party(String name, int num_products)
         {
             this.name = name;
             this.num_products = num_products;
+            subParty = new List<Party>();
         }
 
         public Party()
