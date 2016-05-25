@@ -5,7 +5,7 @@ namespace SchedulerTask
     /// <summary>
     /// Событие
     /// </summary>
-    class Event: IComparable
+    public class Event: IComparable
     {
         private DateTime time;
         

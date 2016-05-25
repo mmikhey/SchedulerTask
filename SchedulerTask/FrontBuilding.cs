@@ -32,7 +32,7 @@ namespace SchedulerTask
 
         public void Build()
         {
-            List<Event> events = new List<Event>();
+            EventList events = new EventList();
             foreach (Party i in party)
             {
                 events.Add(new Event(i.getStartTimeParty()));
@@ -56,10 +56,8 @@ namespace SchedulerTask
                         }
                         else
                         {
-                            if (!events.Contains(new Event(operationTime)))
-                            {
-                                events.Add(new Event(operationTime));
-                            }
+                            events.Add(new Event(operationTime));
+                            events.Sort();
                         }
                     }
                 }
@@ -75,21 +73,15 @@ namespace SchedulerTask
 
                     if (equipmentManager.IsFree(events[0].Time, operation, out operationTime, out equipment))
                     {
-                        bool flafEq;
                         operation.SetOperationInPlan(events[0].Time, operationTime, equipment);
                         equipment.OccupyEquip(events[0].Time, operationTime);
                     }
 
-                    if (!events.Contains(new Event(operationTime)))
-                    {
-                        events.Add(new Event(operationTime));
-                    }
+                    events.Add(new Event(operationTime));
+                    events.Sort();
                 }
 
-                // Удаление текущего события
-                events.RemoveAt(0);
-
-                // Сортировка events
+                events.RemoveFirst();
                 events.Sort();
             }
         }
