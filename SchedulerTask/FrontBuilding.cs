@@ -37,7 +37,6 @@ namespace SchedulerTask
             {
                 events.Add(new Event(i.getStartTimeParty()));
             }
-            events.Sort();
 
             while (events.Count != 0)
             {
@@ -46,7 +45,9 @@ namespace SchedulerTask
                 // Формирование фронта
                 foreach (IOperation operation in operations)
                 {
-                    if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time) && operation.GetParty().getStartTimeParty() <= events[0].Time)
+                    //if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time) && operation.GetParty().getStartTimeParty() <= events[0].Time)
+                    if (!operation.IsEnabled() && operation.PreviousOperationIsEnd(events[0].Time) &&
+                        DateTime.Compare(operation.GetParty().getStartTimeParty(), events[0].Time) <= 0)    //operation наступает раньше events[0].Time
                     {
                         DateTime operationTime;
                         SingleEquipment equipment;
@@ -57,7 +58,6 @@ namespace SchedulerTask
                         else
                         {
                             events.Add(new Event(operationTime));
-                            events.Sort();
                         }
                     }
                 }
@@ -78,11 +78,9 @@ namespace SchedulerTask
                     }
 
                     events.Add(new Event(operationTime));
-                    events.Sort();
                 }
 
                 events.RemoveFirst();
-                events.Sort();
             }
         }
     }

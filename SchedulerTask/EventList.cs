@@ -23,7 +23,12 @@ namespace SchedulerTask
         /// <param name="item">Новое событие</param>
         public void Add(Event item)
         {
-            if(!events.Contains(item)) events.Add(item);
+            foreach (Event e in events)
+            {
+                if (e.Time == item.Time) return;
+            }
+            events.Add(item);
+            Sort();
         }
 
         /// <summary>
@@ -47,6 +52,7 @@ namespace SchedulerTask
         public void RemoveFirst()
         {
             if (events.Count != 0) events.RemoveAt(0);
+            Sort();
         }
     }
 }
