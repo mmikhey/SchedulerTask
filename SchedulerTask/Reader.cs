@@ -29,7 +29,7 @@ namespace SchedulerTask
         public Dictionary<int, IEquipment> ReadSystemData() //чтение данных по расписанию и станкам
         {
             List<Interval> intlist = new List<Interval>();
-        
+            List<Interval> doneintlist = new List<Interval>();
             eqdic = new Dictionary<int, IEquipment>();
             
             DateTime start = new DateTime();
@@ -79,7 +79,10 @@ namespace SchedulerTask
                                 int eh = int.Parse(exc.Attribute("time_period").Value.Substring(ind + 1, 2));
 
                                 DateTime dt = t.GetStartTime().AddHours(-t.GetStartTime().Hour);
-                                t.OccupyHours(dt.AddHours(sh), dt.AddHours(eh - sh));
+                                Interval tmpint;
+                                doneintlist.Add(SeparateInterval(t, dt.AddHours(sh), dt.AddHours(eh), out tmpint));
+                                doneintlist.Add(tmpint);
+
                             }
                         }
                     }
@@ -88,7 +91,7 @@ namespace SchedulerTask
 
             }
 
-            Calendar calendar = new Calendar(intlist);
+            Calendar calendar = new Calendar(doneintlist);
 
             foreach (XElement elm in root.Descendants(df + "EquipmentInformation").Elements(df + "EquipmentGroup"))
             {
@@ -164,11 +167,17 @@ namespace SchedulerTask
                 int id = int.Parse(oper.Attribute("id").Value);
                 int duration = int.Parse(oper.Attribute("duration").Value);
                 int group = int.Parse(oper.Attribute("equipmentgroup").Value);
-                tmpop.Add(new Operation(id, oper.Attribute("name").Value, duration, pop, eqdic[group], parent));
-                opdic.Add(id, new Operation(id, oper.Attribute("name").Value, duration, pop, eqdic[group], parent));
+                tmpop.Add(new Operation(id, oper.Attribute("name").Value,new TimeSpan(duration, 0, 0), pop, eqdic[group], parent));
+                opdic.Add(id, new Operation(id, oper.Attribute("name").Value, new TimeSpan(duration, 0, 0), pop, eqdic[group], parent));
             }
             return tmpop;
 
+        }
+
+        private Interval SeparateInterval(Interval ii, DateTime start, DateTime end, out Interval oi)
+        {
+            oi = new Interval(end, ii.GetEndTime());
+            return new Interval(ii.GetStartTime(), start);
         }
     }
 }
