@@ -21,6 +21,7 @@ namespace SchedulerTask
           foreach (KeyValuePair<int, IOperation> o in oplist)
           {
               Decision d = o.Value.GetDecision();
+              if (d == null) continue;
               string id = Convert.ToString(d.GetOperation().GetID());
               bool found = false;
               foreach (XElement product in root.Descendants(df+ "Product"))
